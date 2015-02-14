@@ -4,7 +4,7 @@ var fs = require('fs');
 
 var extend = require('./extend.js');
 
-var mysqlConfig = JSON.parse(fs.readFileSync('../configs/mysql.json'));
+var mysqlConfig = JSON.parse(fs.readFileSync('./configs/mysql.json'));
 var connection = mysql.createConnection(mysqlConfig);
 
 var Data = module.exports = function() {
@@ -58,7 +58,7 @@ Data.find = function(obj, next) {
 	}
 
 	Then(function(then) {
-		Data.query("SELECT * FROM ?? WHERE ?", [Class.tableName, addWhereAnd(post)], then);
+		Data.query("SELECT * FROM ?? WHERE " + addWhereAnd(post), [Class.tableName], then);
 	}).then(function(then, rs) {
 		var result = [];
 		rs.forEach(function(line) {
@@ -82,15 +82,17 @@ Data.prototype.save = function(next) {
 	next = typeof(next) == 'function' ? next : function() {};
 
 	for (var key in Class.columns) {
-		if (self[key] != self.protoData[key]) post[key] = self[key];
+		if (self[key] && self[key] != self.protoData[key]) post[key] = self[key];
 	}
 
 	if (self.id) {
 		Data.query("UPDATE ?? SET ?? WHERE id=?", [Class.tableName, post, self.id], function(err, result) {
+			if (err) return next(err);
 			next(null, self);
 		});
 	} else {
 		Data.query("INSERT INTO ?? SET ?", [Class.tableName, post], function(err, result) {
+			if (err) return next(err);
 			self.id = result.insertId;
 			next(null, self);
 		});
@@ -100,7 +102,8 @@ Data.prototype.save = function(next) {
 var addWhereAnd = function(post) {
 	var result = ['1=1'];
 	for (var key in post) {
-		result.push("`" + key + "` = '" + post[key] + "'");
+		var value = mysql.escape(post[key]);
+		result.push("`" + key + "` = " + value + "");
 	}
 	return result.join(' AND ');
 };

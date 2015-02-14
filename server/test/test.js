@@ -8,7 +8,9 @@ var Person = require('../lib/Person');
 var p = new Person();
 p.email = 'miwenjie@forgame.com';
 p.password = 'password';
-p.save();
+p.save(function(err) {
+	console.log(err);
+});
 
 // // Load
 // Then(function(then) {

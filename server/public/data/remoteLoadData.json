@@ -1,0 +1,7 @@
+{
+"dataConfig":["item","troop","mission","equip","materialgrade","gemgrade"],
+"requestUrl":"http://localhost/superwar/zeus/",
+"dataRequestUrl":"http://localhost/superwar/zeus/data/"
+// "requestUrl":"http://s0.dev.superwar.com/zeus/",
+// "dataRequestUrl":"http://s0.dev.superwar.com/zeus/data/"
+}

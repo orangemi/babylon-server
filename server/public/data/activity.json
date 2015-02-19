@@ -1,0 +1,149 @@
+{
+	"GoldSale" : {
+		"market" : { "type" : "group", "values" : {}, "module" : {
+				"type" : "input", "canRemove" : true//, "canEditTitle" : true
+			}
+		},
+		"channels" : { "type" : "group", "values" : {}, "module" : {
+				"type" : "input", "canRemove" : true, "canEditTitle" : true
+			}
+		},
+		"type" : { "type" : "input", "default" : "newtype" },
+		"gold" : { "type" : "input", "default" : "100" },
+		"price" : { "type" : "input", "default" : "100" },
+		"unit" : { "type" : "input", "default" : "USD" },
+		"display_price" : { "type" : "input", "default" : "100" },
+		"title" : { "type" : "input", "default" : "Gold x100" },
+		"desc" : { "type" : "input", "default" : "Get Gold x100" },
+		"reward" : { "type" : "reward", "default" : "" },
+		// "display_reward" : { "type" : "input", "default" : "" },
+		"origin" : { "type" : "input", "default" : "" }
+		// "alliance_gift" : { "type" : "input", "default" : "6000003" }
+	// 	"prices" : {
+	// 		"type" : "group", "values" : [], "module" : {
+	// 			"price" : { "type" : "input", "default" : "4.99" },
+	// 			"display_price" : { "type" : "input", "default" : "$ 4.99" },
+	// 			"gold" : { "type" : "input", "default" : "100" },
+	// 			"reward" : { "type" : "reward" },
+	// 			"title" : { "type" : "input", "default" : "this is title" },
+	// 			"alliance_gift" : { "type" : "select", "list" : {
+	// 				"6000003" : "bronze chest",
+	// 				"6000002" : "silver chest",
+	// 				"6000001" : "golden chest"
+	// 			} }
+	// 		}
+	// 	}
+	},
+	"SoloEvent" : {
+		"startDelay" : { "type" : "input", "default" : "3000", "desc" : "延迟开始秒数" },
+		"endDelay" : { "type" : "input", "default" : "86400" , "desc" : "提前结束秒数" },
+		"levels" : { "type" : "group", "values" : {}, "module" : {
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" : {
+				"point" : { "type" : "input", "default" : "1000", "desc" : "完成获得点数" },
+				"reward" : { "type" : "reward", "default" : "" , "desc" : "奖励物品"},
+				"value" : { "type" : "input", "default" : "100" , "desc" : "可购买价值金币总数"},
+				"priceless" : { "type" : "input", "default" : "0" , "desc" : "不可购买数量"}
+			}
+		}, "desc" : "奖励等级"
+		},
+		"points" : { "type" : "group", "values" : {}, "module" : { "type" : "input", "default" : "1", "canRemove" : true, "canEditTitle" : true, "titleSelectList" : [ "build_power", "research_power", "train_trap_1", "train_trap_2", "train_trap_3", "train_trap_4", "heal_1", "heal_2", "heal_3", "kill_troop_1", "kill_troop_2", "kill_troop_3", "kill_troop_4", "train_troop_1", "train_troop_2", "train_troop_3", "train_troop_4", "city_gamble", "kill_monster_1", "kill_monster_2", "kill_monster_3", "kill_monster_4", "kill_monster_5", "kill_monster_6", "collect_resource" ] }, "desc" : "如何获得点数"},
+		"difficulty" : { "type" : "input", "default" : "Easy", "desc":"难度"},
+		//"leader_display_reward" : { "type" : "reward", "default" : "xxx" },
+		"ranks" : { "type" : "group", "values" : {}, "module" : {  
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" :{
+				"reward" : { "type" : "reward", "default" : "" }
+			}
+		}, "desc" : "奖品"
+		},
+		"servers" : { "type" : "group", "values" : {},"module" : { "canRemove" : true, "type" : "input", "default" : "" },"desc":"开启活动服务器"}
+	},
+	"SoloEvent2" : {
+		"comingtime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮Coming Soon时间" },
+		"recordtime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮活动时间" },
+		"breaktime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮的休息时间" },
+		"levels" : { "type" : "group", "values" : {}, "module" : {
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" : {
+				"point" : { "type" : "input", "default" : "1000", "desc" : "完成获得点数" },
+				"reward" : { "type" : "reward", "default" : "" , "desc" : "奖励物品"},
+				"value" : { "type" : "input", "default" : "100" , "desc" : "可购买价值金币总数"},
+				"priceless" : { "type" : "input", "default" : "0" , "desc" : "不可购买数量"}
+			}
+		}, "desc" : "奖励等级"
+		},
+		"points" : { "type" : "group", "values" : {}, "module" : { "type" : "input", "default" : "1", "canRemove" : true, "canEditTitle" : true, "titleSelectList" : [ "build_power", "research_power", "train_trap_1", "train_trap_2", "train_trap_3", "train_trap_4", "heal_1", "heal_2", "heal_3", "kill_troop_1", "kill_troop_2", "kill_troop_3", "kill_troop_4", "train_troop_1", "train_troop_2", "train_troop_3", "train_troop_4", "city_gamble", "kill_monster_1", "kill_monster_2", "kill_monster_3", "kill_monster_4", "kill_monster_5", "kill_monster_6", "collect_resource" ] }, "desc" : "如何获得点数"},
+		"difficulty" : { "type" : "input", "default" : "Easy", "desc":"难度"},
+		//"leader_display_reward" : { "type" : "reward", "default" : "xxx" },
+		"ranks" : { "type" : "group", "values" : {}, "module" : {  
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" :{
+				"reward" : { "type" : "reward", "default" : "" }
+			}
+		}, "desc" : "奖品"
+		},
+		"servers" : { "type" : "group", "values" : {},"module" : { "canRemove" : true, "type" : "input", "default" : "" },"desc":"开启活动服务器"}
+	},
+
+	"AllianceEvent2" : {
+		"comingtime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮Coming Soon时间" },
+		"recordtime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮活动时间" },
+		"breaktime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮的休息时间" },
+		"levels" : { "type" : "group", "values" : {}, "module" : {
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" : {
+				"point" : { "type" : "input", "default" : "1000" , "desc" : "完成获得点数"},
+				"reward" : { "type" : "reward", "default" : "" , "desc" : "奖励物品"},
+				"value" : { "type" : "input", "default" : "100", "desc" : "可购买价值金币总数" },
+				"priceless" : { "type" : "input", "default" : "0" , "desc" : "不可购买数量"}
+			}
+		}, "desc" : "奖励等级"
+		},
+		"points" : { "type" : "group", "values" : {}, "module" : { "type" : "input", "default" : "1", "canRemove" : true, "canEditTitle" : true, "titleSelectList" : [ "build_power", "research_power", "train_trap_1", "train_trap_2", "train_trap_3", "train_trap_4", "heal_1", "heal_2", "heal_3", "kill_troop_1", "kill_troop_2", "kill_troop_3", "kill_troop_4", "train_troop_1", "train_troop_2", "train_troop_3", "train_troop_4", "city_gamble", "kill_monster_1", "kill_monster_2", "kill_monster_3", "kill_monster_4", "kill_monster_5", "kill_monster_6", "collect_resource" ] }, "desc" : "如何获得点数"},
+		"difficulty" : { "type" : "input", "default" : "Easy" , "desc":"难度"},
+		//"leader_display_reward" : { "type" : "reward", "default" : "xxx" },
+		"ranks" : { "type" : "group", "values" : {}, "module" : {  
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" :{
+				"reward" : { "type" : "reward", "default" : "" }
+			}
+		}, "desc" : "奖品"},
+		"servers" : { "type" : "group", "values" : {},"module" : {
+			"canRemove" : true, "type" : "input", "default" : "" 
+		},"desc":"开启活动服务器"}
+	},
+
+	"AllianceEvent" : {
+		"startDelay" : { "type" : "input", "default" : "3000" , "desc" : "延迟开始秒数"},
+		"endDelay" : { "type" : "input", "default" : "86400" , "desc" : "提前结束秒数"},
+		"levels" : { "type" : "group", "values" : {}, "module" : {
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" : {
+				"point" : { "type" : "input", "default" : "1000" , "desc" : "完成获得点数"},
+				"reward" : { "type" : "reward", "default" : "" , "desc" : "奖励物品"},
+				"value" : { "type" : "input", "default" : "100", "desc" : "可购买价值金币总数" },
+				"priceless" : { "type" : "input", "default" : "0" , "desc" : "不可购买数量"}
+			}
+		}, "desc" : "奖励等级"
+		},
+		"points" : { "type" : "group", "values" : {}, "module" : { "type" : "input", "default" : "1", "canRemove" : true, "canEditTitle" : true }, "desc" : "如何获得点数"},
+		"difficulty" : { "type" : "input", "default" : "Easy" , "desc":"难度"},
+		//"leader_display_reward" : { "type" : "reward", "default" : "xxx" },
+		"ranks" : { "type" : "group", "values" : {}, "module" : {  
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" :{
+				"reward" : { "type" : "reward", "default" : "" }
+			}
+		}, "desc" : "奖品"},
+		"servers" : { "type" : "group", "values" : {},"module" : {
+			"canRemove" : true, "type" : "input", "default" : "" 
+		},"desc":"开启活动服务器"}
+	},
+
+	"AddMonster" : {
+		"comingtime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮Coming Soon时间" },
+		"recordtime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮活动时间" },
+		"breaktime" : { "type" : "input", "default" : "3600" , "desc" : "每一轮的休息时间" },
+		"areas" : { "type" : "group", "values" : {},"module" : { "canRemove" : true, "type" : "input", "default" : "" },"desc":"服务器"},
+		"monster" : { "type" : "group", "values" : {}, "module" : {  
+			"canEditTitle" : true, "canRemove" : true, "type" : "group", "values" :{
+				"monster_id" : { "type" : "input", "default" : "","desc":"怪编号" },
+				"num" : { "type" : "input", "default" : "1000" ,"desc":"怪数量"},
+				"duration_time" : { "type" : "input", "default" : "14400","desc":"怪持续时间" }
+			}
+		},"desc":"怪"}
+	}
+}

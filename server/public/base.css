@@ -1,0 +1,17 @@
+body {
+	font-family: Helvetica, Arial, sans-serif;
+}
+ul, li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+a,a:active,a:visited {
+	color: inherit;
+	text-decoration: inherit;
+}
+
+.clear { clear: both; }
+
+.hide { display:none; }

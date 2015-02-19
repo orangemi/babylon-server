@@ -1,0 +1,21 @@
+{
+	"build"		: "1",
+	"version"	: "0.1",
+	"author"	: "Orange Mi",
+
+	// release
+	"release"		: false,
+	"isLocalModel"	: true,
+
+	// Master URL
+	"language"	: "en-US",
+	"baseUrl"	: "localhost", //real comment
+
+	// screen
+	"width"		: 480,
+	// "width"	: 640,
+	"height"	: 320,
+	// "height"	: 960,
+
+	"end" : null
+}

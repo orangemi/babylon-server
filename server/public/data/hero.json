@@ -1,0 +1,36 @@
+[
+	{
+		"id" : 1,
+		"name" : "Ulrich"
+	}, {
+		"id" : 2,
+		"name" : "Merida"
+	}, {
+		"id" : 3,
+		"name" : "Blaze"
+	}, {
+		"id" : 4,
+		"name" : "Boomey"
+	}, {
+		"id" : 5,
+		"name" : "Bones"
+	}, {
+		"id" : 6,
+		"name" : "Gizmo"
+	}, {
+		"id" : 7,
+		"name" : "Uther"
+	}, {
+		"id" : 8,
+		"name" : "Arcane"
+	}, {
+		"id" : 9,
+		"name" : "Slash"
+	}, {
+		"id" : 10,
+		"name" : "Ember"
+	}, {
+		"id" : 11,
+		"name" : "Faenel"
+	}
+]

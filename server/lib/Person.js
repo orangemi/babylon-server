@@ -11,12 +11,13 @@ Person.STATUS = {
 
 Person.tableName = 'person';
 Person.columns = {
-	id : null,
+	id : 0,
 	status : Person.STATUS.NORMAL,
 	name : '',
 	email : '',
 	password : '',
 	description : '',
-	createtime : '',
-	updatetime : '',
+	createtime : 0,
+	updatetime : 0,
+	main_task_id : 0,
 };

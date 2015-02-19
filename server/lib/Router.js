@@ -1,5 +1,6 @@
 var Http = require('http');
 var Url = require('url');
+var path2rexep = require('path-to-regexp');
 
 var _extend = function(obj) {
 	var forEach = Array.prototype.forEach;
@@ -26,22 +27,31 @@ Request.prototype.init = function(req, options) {
 		this.request = req.request;
 
 		this.method = req.method;
+		this.headers = req.headers;
+		this.cookie = req.cookie;
 		this.url = req.url;
-		this.path = _extend([], req.path);
-		this.path.splice(1, options.pathShift || 0);
-		if (this.path.length == 1) this.path.push('');
-		this.pathname = this.path.join('/');
+		this.pathname = options.prefix ? req.pathname.substring(options.prefix.length) : req.pathname;
+		this.path = this.pathname.split('/');
 		this.query = _extend({}, req.query);
 		//TODO: cookie
-
 	} else if (req instanceof Http.IncomingMessage) {
 		this.request = req;
 
 		this.method = req.method;
 		this.url = Url.parse(req.url, true);
-		this.pathname = this.url.pathname.replace(/\/$/, '');
+		this.pathname = this.url.pathname;
 		this.path = this.pathname.split('/');
 		this.query = this.url.query;
+		this.headers = req.headers;
+		this.cookie = (function(line) {
+			var cookie = {};
+			if (!line) return cookie;
+			line.toString().split(';').forEach(function(kv) {
+				kv = kv.split('=');
+				cookie[kv[0].trim()] = kv[1].trim();
+			});
+			return cookie;
+		})(req.headers.cookie);
 		//TODO: cookie
 
 	} else {
@@ -49,6 +59,60 @@ Request.prototype.init = function(req, options) {
 	}
 
 };
+
+var Response = function(res, options) {
+	this.init(res, options);
+};
+
+Response.prototype.init = function(res, options) {
+	if (res instanceof Response) {
+		this.response = res.response;
+		this.cookie = res.cookie;
+	} else if (res instanceof Http.ServerResponse) {
+		this.response = res;
+		this.cookie = {};
+	} else {
+		throw new Error('res is not a Response');
+	}
+};
+
+Response.prototype.setCookie = function(key, value, expire, path) {
+	this.cookie[key] = {
+		value: value,
+		expire: expire || 0,
+		path: path || '/',
+	};
+	var cookies = [];
+	for (var name in this.cookie) {
+		var cookie = this.cookie[name];
+		cookies.push(name + '=' + cookie.value + (cookie.path ? '; Path=/' : '') + (cookie.expire ? '; Expires=Date' : ''));
+	}
+	this.setHeader('Set-Cookie', cookies);
+	return this;
+};
+
+Response.prototype.status = function(statusCode, statusMessage) {
+	this.response.statusCode = statusCode;
+	if (statusMessage) this.response.statusMessage = statusMessage;
+};
+
+Response.prototype.setHeader = function(key, value) {
+	return this.response.setHeader(key, value);
+};
+
+Response.prototype.write = function(buffer) {
+	return this.response.write(buffer);
+};
+
+Response.prototype.json = function(json) {
+	this.setHeader('Content-Type', 'application/json');
+	return this.write(JSON.stringify(json));
+};
+
+Response.prototype.end = function(buffer) {
+	return this.response.end(buffer);
+};
+
 
 var Router = function(httpServer, options) {
 	this.init(httpServer, options);
@@ -68,27 +132,31 @@ Router.prototype.setHttpServer = function(httpServer) {
 
 	this.isRoot = true;
 	httpServer.on('request', function(req, res) {
-		self.process(new Request(req), res);
+		self.process(new Request(req), new Response(res));
 	});
 };
 
 Router.prototype.process = function(req, res) {
 	var self = this;
 	var pathname = req.pathname;
+	var method = req.method;
 	var matched = false;
+	var path;
 	this.callbacks.forEach(function(callback) {
 		var reg = callback.reg;
+		// console.log(pathname, reg, reg.exec(pathname));
 		if (
-			reg.test(pathname) &&
-			(callback.method = 'all' || callback.method == method.toString().toLowerCase())) {
+			(path = reg.exec(pathname)) &&
+			(callback.method == 'all' || callback.method == method.toString().toLowerCase())) {
 			var handler = callback.handler;
 			if (handler instanceof Router) {
-				// var pathSplit = reg.exec(pathname)[1];
-				var result = handler.process(new Request(req, {pathShift : callback.splice}), res);
+				var result = handler.process(new Request(req, {prefix: path[0]}), res);
 				matched = matched || result;
-			} else {
-				handler.apply(self, [new Request(req), res]);
+			} else if (typeof(handler) == 'function') {
+				handler.apply(self, [new Request(req), new Response(res)]);
 				matched = true;
+			} else {
+				console.error('path handler is not a function or a Router for ' + pathname);
 			}
 		}
 	});
@@ -109,29 +177,22 @@ Router.prototype.post = function(reg, func) {
 	this.addCallback('post', reg, func);
 };
 
-Router.prototype.addCallback = function(method, reg, handler) {
+Router.prototype.use = function(string, router) {
+	if (!(router instanceof Router)) throw new Error('router is not a Router');
+	this.addCallback('all', string, router, {end: false});
+};
+
+Router.prototype.addCallback = function(method, reg, handler, options) {
+	options = options || {};
 	var splice = 0;
-	if (typeof(reg) == 'string') {
-		if (reg[0] !== '/') throw new Error('regex need / at first');
-		if (reg.substr(-2) == '/*') {
-			splice = reg.split('/').length - 2;
-			reg = reg.replace(/\/\*$/, '(|/*)');
-		}
-		reg = reg.replace(/\//g, '\\/').replace(/\?/g, '.').replace(/\*/g, '.*');
-		reg = new RegExp('^' + reg + '\\/?$');
-	} else if (reg instanceof RegExp) {
-
-	} else {
-		throw new Error('unknown regex');
-	}
-
-	if (typeof(handler) != 'function' && !(handler instanceof Router)) throw new Error('handler is not a Router or function');
+	reg = path2rexep(reg, options);
 	this.callbacks.push({
 		method: method.toString().toLowerCase(),
 		reg: reg,
 		splice : splice,
 		handler: handler,
 	});
+
 };
 
 module.exports = Router;

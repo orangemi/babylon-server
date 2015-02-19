@@ -14,11 +14,17 @@ var Data = module.exports = function() {
 Data.query = connection.query.bind(connection);
 
 Data.prototype.init = function() {
-
 	this.protoData = {};
 	var Class = this.constructor;
 	for (var key in Class.columns) {
 		this[key] = Class.columns[key];
+	}
+};
+
+Data.prototype.loadObj = function(obj) {
+	var Class = this.constructor;
+	for (var key in Class.columns) {
+		this[key] = this.protoData[key] = obj[key];
 	}
 };
 
@@ -30,20 +36,12 @@ Data.load = function(id, next) {
 
 	Then(function(then) {
 		Data.query("SELECT * FROM ?? WHERE id=?", [Class.tableName, id], then);
-	}).then(function(then, result) {
+	}).then(function(then, rows) {
 		var obj = new Class();
-		if (result.length) {
-			result = result[0];
-			for (var key in Class.columns) {
-				obj[key] = obj.protoData[key] = result[key];
-			}
-			next(null, obj);
-		} else {
-			then('no user');
-		}
-	}).catch(function(then, error) {
-		console.error(error.stack);
-		next(error);
+		if (!rows.length) throw new Error('no data id=' + id);
+		var row = rows[0];
+		obj.loadObj(row);
+		next(null, obj);
 	});
 };
 
@@ -59,19 +57,14 @@ Data.find = function(obj, next) {
 
 	Then(function(then) {
 		Data.query("SELECT * FROM ?? WHERE " + addWhereAnd(post), [Class.tableName], then);
-	}).then(function(then, rs) {
+	}).then(function(then, rows) {
 		var result = [];
-		rs.forEach(function(line) {
+		rows.forEach(function(row) {
 			var obj = new Class();
-			for (var key in Class.columns) {
-				obj[key] = obj.protoData[key] = line[key];
-			}
+			obj.loadObj(row);
 			result.push(obj);
 		});
 		next(null, result);
-	}).catch(function(then, error) {
-		console.error(error.stack);
-		next(error);
 	});
 };
 
@@ -82,7 +75,7 @@ Data.prototype.save = function(next) {
 	next = typeof(next) == 'function' ? next : function() {};
 
 	for (var key in Class.columns) {
-		if (self[key] && self[key] != self.protoData[key]) post[key] = self[key];
+		if (self[key] !== null && self[key] != self.protoData[key]) post[key] = self[key];
 	}
 
 	if (self.id) {
@@ -97,6 +90,15 @@ Data.prototype.save = function(next) {
 			next(null, self);
 		});
 	}
+};
+
+Data.prototype.display = function() {
+	var Class = this.constructor;
+	var result = {};
+	for (var key in Class.columns) {
+		result[key] = this[key];
+	}
+	return result;
 };
 
 var addWhereAnd = function(post) {

@@ -1,5 +1,5 @@
 <div class="top flex">
-	<div class="search_panel">
+	<div class="search-panel">
 		<div class="input-box input-box-search">
 			<input class="input input-search" / placeholder="Search">
 			<span class="icon icon-dropdown"></span>
@@ -8,7 +8,7 @@
 			<span class="icon icon-search"></span>
 		</button>
 	</div>
-	<div class="profile_panel">
+	<div class="profile-panel">
 		<div class="profile_img"></div>
 		<span class="profile_name">Name</span>
 		<span class="icon icon-cog"></span>
@@ -16,28 +16,75 @@
 </div>
 <div class="content flex">
 	<div class="list">
-		<div>Project</div>
-		<ul class="tasks"></ul>
-	</div>
-	<div class="detail">
-		<div class="title">Task 1</div>
-		<div class="assignee">Me</div>
-		<div class="schedule_time"></div>
-		<div class="tag_panel">
-			<ul class="tags">
-				<li class="tag">Tag 1 <span>X</span></li>
-				<li class="tag">Tag 2 <span>X</span></li>
+		<div class="title">Project</div>
+		<div class="tasks">
+			<ul class="task-list">
+				<li class="task">
+					<span class="sort">Sort</span>
+					<span class="hand">
+						<span class="icon icon-option-v"></span>
+						<span class="icon icon-option-v"></span>
+					</span>
+					<span class="complete icon icon-uncheck"></span>
+					<span class="assignee">Me</span>
+					<span class="title">Task Name 1</span>
+				</li>
 			</ul>
 		</div>
-		<div class="description">Description</div>
-		<ul class="sub_tasks tasks">
-			<li class="task">
-				<span class="move"></span>
-				<span class="complete"></span>
-				<span class="assignee">Me</span>
-				<span class="title">Task 1</span>
-			</li>
-		</ul>
+	</div>
+	<div class="detail">
+		<div class="task-detail">
+			<div class="panel">
+				<div class="assignee">Me</div>
+				<div class="schedule_time"></div>
+			</div>
+			<div class="panel title-panel">
+				<span class="icon icon-project"></span>
+				<div class="title">Task 1</div>
+			</div>
+			<div class="panel tag-panel">
+				<span class="icon icon-tags"></span>
+				<ul class="tags">
+					<li class="tag">
+						<span class="tag-name">Tag 1</span>
+						<span class="icon icon-remove"></span>
+					</li>
+					<li class="tag">
+						<span class="tag-name">Tag 2</span>
+						<span class="icon icon-remove"></span>
+					</li>
+				</ul>
+			</div>
+			<div class="panel description-panel">
+				<span class="icon"></span>
+				<textarea class="Description"></textarea>
+			</div>
+			<div class="sub_tasks">
+				<ul class="task-list">
+					<li class="task">
+						<span class="hand">
+							<span class="icon icon-option-v"></span>
+							<span class="icon icon-option-v"></span>
+						</span>
+						<span class="complete icon icon-uncheck"></span>
+						<span class="assignee">Me</span>
+						<span class="title">Task 1</span>
+					</li>
+				</ul>
+			</div>
+			<div class="panel comment-panel">
+				<div class="comments">
+					<ul class="comment-list">
+						<li>
+							<div class="post-user">SomeOne</div>
+							<div class="post-content">Some Comment</div>
+							<div class="post-time">Just Now</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
 	</div>	
 </div>
 <div class="bottom"></div>

@@ -2,10 +2,10 @@
 
 #home { position: absolute; top: 0; bottom: 0; left: 0; right: 0; display: flex; flex-direction: column; }
 	#home>.top { height: 60px; }
-		.top .search_panel { flex: 1; }
-		.top .profile_panel { width: 300px; }
-			.profile_panel .profile_img { display: inline-block; width: 28px; height: 28px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; }
-			.profile_panel .profile_name { display: inline-block; }
+		.top .search-panel { flex: 1; }
+		.top .profile-panel { width: 300px; }
+			.profile-panel .profile_img { display: inline-block; width: 28px; height: 28px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; }
+			.profile-panel .profile_name { display: inline-block; }
 	#home>.content { flex: 1; }
 		#home>.content>.list { flex: 2; min-width: 200px; }
 		#home>.content>.detail { flex: 1; }
@@ -16,6 +16,19 @@
 .task { border-bottom: solid 1px #ccc; }
 	.task .hand { display: inline-block; width: 15px; }
 		.task .hand .icon-option-v { margin-left: -5px; width: 6px; text-align: center; }
+	.task .assignee { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; margin-right: 5px; }
+
+.task-detail { }
+	.task-detail .panel { padding: 8px 6px; border-bottom: solid 1px #ccc; font-size: 14px; }
+		.task-detail>.panel>.icon { width: 30px; }
+	.task-detail .title-panel { height: 20px; }
+		.title-panel .title { display: inline-block; font-size: 18px; }
+	.tag-panel { }
+		.tag-panel .tags { display: inline-flex; }
+		.tag-panel .tag { border: solid 1px #ccc; padding: 2px 4px; background-color: #eee; display: inline-block; border-radius: 4px; line-height: 12px; margin-right: 10px; }
+		.tag-panel .tag-name { display: inline-block; font-size: 12px; }
+		.tag-panel .icon-remove { vertical-align: -1px; }
+	}
 
 
 .input-box-search { width: 300px; }
@@ -48,6 +61,8 @@
 	.icon-option-v:before { content: "\e235"; }
 	.icon-uncheck:before { content: "\e157"; }
 	.icon-check:before { content: "\e067"; }
+	.icon-project:before { content: "\e118"; }
+	.icon-tags:before { content: "\e042"; }
 
 /* basic items */
 .input {

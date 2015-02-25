@@ -7,7 +7,33 @@ var Task = require('../lib/Task');
 
 var router = module.exports = new Router();
 
-router.post(/\/task\/(\d+)?$/, function(req, res) {
+router.post('/', function(req, res) {
+	var current_task;
+	var current_person;
+	// console.log(id, req);
+
+	Then(function(then) {
+		Session.get(req.cookie.session, then);
+	}).then(function(then, personId) {
+		Person.load(personId, then);
+	}).then(function(then, person) {
+		current_person = person;
+		var task = new Task();
+		task.creator = person.id;
+		task.save(then);
+	}).then(function(then, task) {
+		current_task = task;
+		task.assignTo(current_person, 1, then);
+	}).then(function(then, task) {
+		res.write(JSON.stringify(task.display()));
+		then();
+	}).finally(function() {
+		res.end();
+	});
+});
+
+router.post(/^\/(\d+)\/?$/, function(req, res) {
+	console.log(req.match);
 	var id = req.path[2];
 	var current_task;
 	var current_person;

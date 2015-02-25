@@ -1,4 +1,11 @@
 // var sessions = {};
+var fs = require('fs');
+var memcache = require('memcache');
+var memcacheConfig = JSON.parse(fs.readFileSync('./configs/memcache.json'));
+
+var connection = new memcache.Client(memcacheConfig.port, memcacheConfig.host);
+connection.connect();
+
 var Session = module.exports = {
 	sessions : {},
 	set : function(value, expire, options) {
@@ -9,19 +16,24 @@ var Session = module.exports = {
 		var date = new Date().getTime().toString();
 		var rand = Math.random().toString().substr(2);
 		var session = md5(date + rand);
-		// console.log(date, rand, session);
-		this.sessions[session] = value;
-		setTimeout(function() {
-			self.clear(session);
-		}, expire * 1000);
+
+		connection.set(session, value, expire);
+		// this.sessions[session] = value;
+		// setTimeout(function() {
+		// 	self.clear(session);
+		// }, expire * 1000);
 		
 		return session;
 	},
 
-	get : function(session) {
-		if (session) return this.sessions[session];
-		return null;
-		// return this.sessions;
+	get : function(session, next) {
+		// if (session) return this.sessions[session];
+		// return null;
+		if (!session) {
+			next(new Error('no Session'));
+			return;
+		}
+		connection.get(session, next);
 	},
 
 	clear : function(session) {

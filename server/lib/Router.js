@@ -31,7 +31,9 @@ Request.prototype.init = function(req, options) {
 		this.cookie = req.cookie;
 		this.url = req.url;
 		this.pathname = options.prefix ? req.pathname.substring(options.prefix.length) : req.pathname;
+		this.pathname = this.pathname || '/';
 		this.path = this.pathname.split('/');
+		this.match = options.match;
 		this.query = _extend({}, req.query);
 		//TODO: cookie
 	} else if (req instanceof Http.IncomingMessage) {
@@ -41,6 +43,7 @@ Request.prototype.init = function(req, options) {
 		this.url = Url.parse(req.url, true);
 		this.pathname = this.url.pathname;
 		this.path = this.pathname.split('/');
+		this.match = options.match;
 		this.query = this.url.query;
 		this.headers = req.headers;
 		this.cookie = (function(line) {
@@ -141,19 +144,19 @@ Router.prototype.process = function(req, res) {
 	var pathname = req.pathname;
 	var method = req.method;
 	var matched = false;
-	var path;
 	this.callbacks.forEach(function(callback) {
 		var reg = callback.reg;
-		// console.log(pathname, reg, reg.exec(pathname));
-		if (
-			(path = reg.exec(pathname)) &&
-			(callback.method == 'all' || callback.method == method.toString().toLowerCase())) {
+		var match = reg.exec(pathname);
+// console.log(pathname, reg, match);
+		if (!match) return;
+
+		if (callback.method == 'all' || callback.method == method.toString().toLowerCase()) {
 			var handler = callback.handler;
 			if (handler instanceof Router) {
-				var result = handler.process(new Request(req, {prefix: path[0]}), res);
+				var result = handler.process(new Request(req, {prefix: match[0], match: match}), res);
 				matched = matched || result;
 			} else if (typeof(handler) == 'function') {
-				handler.apply(self, [new Request(req), new Response(res)]);
+				handler.apply(self, [new Request(req, {match: match}), new Response(res)]);
 				matched = true;
 			} else {
 				console.error('path handler is not a function or a Router for ' + pathname);
@@ -184,12 +187,10 @@ Router.prototype.use = function(string, router) {
 
 Router.prototype.addCallback = function(method, reg, handler, options) {
 	options = options || {};
-	var splice = 0;
 	reg = path2rexep(reg, options);
 	this.callbacks.push({
 		method: method.toString().toLowerCase(),
 		reg: reg,
-		splice : splice,
 		handler: handler,
 	});
 

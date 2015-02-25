@@ -54,7 +54,6 @@ router.get('/login', function(req, res) {
 	}).then(function(then, person) {
 		var session = Session.set(person.id);
 		res.setCookie('session', session);
-		// res.setHeader('Set-Cookie', []);
 		res.write('login success');
 		then();
 	}).catch(function(then, error) {

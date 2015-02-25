@@ -2,7 +2,7 @@ define(['marionette', 'backbone', 'underscore',], function (Marionette, Backbone
 	var InputMenuView = Marionette.Layout.extend({
 		tagName : 'li',
 		template : _.template('<a><span><%=text%></span><span class="edit"><input class="form-control" value="<%=defaultText%>" /></span></a>'),
-		className : 'menu_item menu_input',
+		className : 'menu-item menu_input',
 		events : {
 			'focus input' : 'onFocus',
 			'blur input' : 'onBlur',

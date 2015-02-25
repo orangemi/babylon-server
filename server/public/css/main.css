@@ -1,3 +1,5 @@
+.clear { clear: both; }
+.hide { display:none; }
 .flex { display: -webkit-flex; display: flex; }
 
 #home { position: absolute; top: 0; bottom: 0; left: 0; right: 0; display: flex; flex-direction: column; }
@@ -11,12 +13,24 @@
 		#home>.content>.detail { flex: 1; }
 	#home>.bottom { height: 20px; }
 
+
+.menu-item.current { background-color: #deedff; }
+
 .tasks { }
 
-.task { border-bottom: solid 1px #ccc; }
-	.task .hand { display: inline-block; width: 15px; }
-		.task .hand .icon-option-v { margin-left: -5px; width: 6px; text-align: center; }
-	.task .assignee { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; margin-right: 5px; }
+.task-line { border-bottom: solid 1px #ccc; padding: 5px 0;  }
+	.task-line .left-bar { width: 20px; background-color: #eee; border-right: solid 1px #999; text-align: right; padding: 5px; margin: -5px 0; }
+	.task-line .sort { }
+	.task-line .hand { text-align:center; background-color: #fff; border-right: solid 1px #fff; display: none; cursor: move; }
+	.task-line.current .hand { display: block; }
+	.task-line:hover .hand { display: block; }
+	.task-line.current .sort { display: none; }
+	.task-line:hover .sort { display: none; }
+		.task-line .hand .icon-option-v { margin-left: -5px; width: 6px; text-align: center; }
+	.task-line .assignee { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; margin-right: 5px; }
+	.task-line .title { border: none; display: inline-block; flex: 1; outline: none; font-size: 16px; margin: 0 5px; }
+	.task-line .complete { margin: 0 10px; }
+	.task-line .assignee { margin: 0 10px; }
 
 .task-detail { }
 	.task-detail .panel { padding: 8px 6px; border-bottom: solid 1px #ccc; font-size: 14px; }
@@ -44,25 +58,27 @@
 
 /* icons */
 @font-face {
-  font-family: 'Glyphicons Halflings';
-  src: url('../fonts/glyphicons-halflings-regular.eot');
-  src:	url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
-  		url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'),
-  		url('../fonts/glyphicons-halflings-regular.woff') format('woff'),
-  		url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'),
-  		url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+	font-family: 'Glyphicons Halflings';
+	/*src: url('../fonts/glyphicons-halflings-regular.eot');*/
+	src:	url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+			url('../fonts/glyphicons-regular.woff2') format('woff2'),
+			url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'),
+			url('../fonts/glyphicons-halflings-regular.woff') format('woff'),
+			url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'),
+			url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
 }
 
 .icon { display: inline-block; font-family: 'Glyphicons Halflings'; }
-	.icon-dropdown:before { content: "\e114"; }
-	.icon-cog:before { content: "\e019"; }
-	.icon-remove:before { content: "\e014"; }
-	.icon-search:before { content: "\e003"; }
-	.icon-option-v:before { content: "\e235"; }
-	.icon-uncheck:before { content: "\e157"; }
-	.icon-check:before { content: "\e067"; }
-	.icon-project:before { content: "\e118"; }
-	.icon-tags:before { content: "\e042"; }
+	.icon-dropdown:before { content: "\e602"; }
+	.icon-cog:before { content: "\e137"; }
+	.icon-remove:before { content: "\e208"; }
+	.icon-search:before { content: "\e028"; }
+	.icon-option-v:before { content: "\e518"; }
+	.icon-uncheck:before { content: "\e154"; }
+	.icon-check:before { content: "\e153"; }
+	.icon-project:before { content: "\e072"; }
+	.icon-tags:before { content: "\e067"; }
+	.icon-right:before { content: "\e224"; }
 
 /* basic items */
 .input {
@@ -104,4 +120,27 @@
 .input-box .input {
 	border: none; position: relative; box-shadow: none; flex: 1;
 	background-color: transparent;
+}
+
+.dropdown-menu {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	display: none;
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	-webkit-background-clip: padding-box;
+			background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+    		box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }

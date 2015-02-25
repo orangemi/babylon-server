@@ -1,6 +1,6 @@
 define([
-'marionette', 'underscore', 'app/app', 'text!html/Home.html', 'views/TaskList'],
-function (Marionette, _, app, Html, TaskList) {
+'marionette', 'underscore', 'app/app', 'text!html/Home.html', 'views/Menu', 'views/TaskList', 'models/Task'],
+function (Marionette, _, app, Html, MenuView, TaskList, TaskModel) {
 	var HomeView = Marionette.Layout.extend({
 		id : 'home',
 		className : 'flex home',
@@ -14,11 +14,49 @@ function (Marionette, _, app, Html, TaskList) {
 			"popRegion" : ">.pop",
 		},
 
-		initialize : function() {},
+		events : {
+			'click .view-type' : 'onViewTypeClick',
+		},
+
+		initialize : function() {
+			var taskList = this.taskList = new TaskList();
+		},
 
 		onRender : function() {
-			var taskList = new TaskList();
+			this.taskList.render().$el.appendTo(this.$el.find('.content .list .tasks'));
+
+			//TODO add a sample
+			this.taskList.collection.add({});
+
+			this.onViewChange('MyTask');
+
+			// var task = new TaskModel();
+			// task.save();
 			
+		},
+
+		onViewTypeClick : function(evt) {
+			var self = this;
+			var $dom = $(evt.currentTarget);
+			var menuView = new MenuView({menus : [
+				{ type: 'button', value: 'MyTask', text: 'My Task', },
+				{ type: 'button', value: 'MyProject', text: 'My Project', },
+				
+			]});
+
+			menuView.show();
+			menuView.setPosition($dom.offset().left, $dom.offset().top + $dom.height());
+			// this.listenTo(menuView, 'menu:ButtonClick', this.onViewChange);
+			menuView.on('menu:ButtonClick', function(buttonView) {
+				self.onViewChange(buttonView.model.get('value'), buttonView.model.get('text'));
+			});
+
+		},
+
+		onViewChange : function(projectId, viewName) {
+			console.log(projectId);
+			if (projectId == 'MyTask');
+			this.taskList.collection.fetch('my');
 		},
 
 		showPop : function(view) {

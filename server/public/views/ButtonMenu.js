@@ -2,7 +2,7 @@ define(['marionette', 'backbone', 'underscore',], function (Marionette, Backbone
 	var ButtonMenu = Marionette.Layout.extend({
 		tagName : 'li',
 		template : _.template('<a><%=text%></a>'),
-		className : 'menu_item menu_button',
+		className : 'menu-item menu_button',
 		events : {
 			'click' : 'onClick'
 		},

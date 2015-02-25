@@ -13,6 +13,7 @@ function (Backbone, _, DialogView, HomeView, Models) {
 			''					: 'goHome',
 			'home'				: 'goHome',
 			'login'				: 'goLogin',
+			'task/:id'			: 'goTask',
 			'*notFound'			: 'goNotFound',
 		},
 
@@ -51,6 +52,9 @@ function (Backbone, _, DialogView, HomeView, Models) {
 			this.render().bodyRegion.reset();
 		},
 
+		goTask : function(id) {
+			
+		},
 
 		goLogin : function() {
 			var self = this;

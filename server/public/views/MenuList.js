@@ -4,7 +4,7 @@ var _id = 1;
 
 	var MenuList = Marionette.Layout.extend({
 		tagName : 'ul',
-		className : 'menu_list dropdown-menu',
+		className : 'menu-list dropdown-menu',
 		template : _.template(''),
 
 //		menus : null,
@@ -39,7 +39,7 @@ this._id = _id++;
 			this.$el.attr('tabindex', 1);
 			this.$el.show();
 			setTimeout(function() {
-				self.$el.children('.menu_item').first().addClass('current');
+				self.$el.children('.menu-item').first().addClass('current');
 				self.$el.focus();
 			});
 		},
@@ -48,8 +48,8 @@ this._id = _id++;
 			var self = this;
 			if (!this.$el.is(':focus')) return;
 			// console.log(evt);
-			var $current = this.$el.find('.menu_item.current');
-			if (!$current[0]) $current = this.$el.children('.menu_item').first(); 
+			var $current = this.$el.find('.menu-item.current');
+			if (!$current[0]) $current = this.$el.children('.menu-item').first(); 
 			var $next;
 
 			if (evt.keyCode === 40) {
@@ -65,7 +65,7 @@ this._id = _id++;
 
 		onKeyUp : function(evt) {
 			if (!this.$el.is(':focus')) return;
-			var $current = this.$el.find('.menu_item.current');
+			var $current = this.$el.find('.menu-item.current');
 
 			if (evt.keyCode === 40 || evt.keyCode === 38) {
 				return;

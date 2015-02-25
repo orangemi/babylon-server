@@ -1,32 +1,50 @@
 define([
 'marionette', 'underscore', 'app/app', 'text!html/TaskLine.html', ],
 function (Marionette, _, app, Html) {
-	var HomeView = Marionette.Layout.extend({
+	var View = Marionette.Layout.extend({
 		tagName : 'li',
-		className : 'flex home',
+		className : 'task-line flex',
 		template : _.template(Html),
 
-		regions : {
-			"topRegion" : ">.top",
-			"leftRegion" : ">.left",
-			"bodyRegion" : ">.body",
-			"bottomRegion" : ">.bottom",
-			"popRegion" : ">.pop",
+		events : {
+			'keyup >.title' : 'onTitleKeyUp',
+			'click .go-detail' : 'onGoDetailClick',
 		},
 
-		initialize : function() {},
+		initialize : function(options) {
+			options = options || {};
+			this.model = options.model || new Backbone.Model();
+			this.listenTo(this.model, 'remove', this.remove);
+		},
 
 		onRender : function() {
+			var self = this;
+			var $el = this.$el;
+			$el.find('.title').val(this.model.get('title') || '');
+			// setTimeout(function() {
+			// 	self.$el.find('>.title').focus();
+			// })
 		},
 
-		showPop : function(view) {
-			this.popRegion.show(view);
-			var pops = this.$el.find('>.pop').removeClass('hide');
-			view.on('close', function() {
-				if (pops.length == 1) pops.addClass('hide');
-			});
+		onTitleKeyUp : function(evt) {
+			if (evt.keyCode == 13) {
+				//ENTER
+				// evt.preventDefault();
+				var sort = this.model.get('sort') + 1;
+				this.trigger('addTask', {sort: sort}, {focus: true});
+			}
+		},
+
+		onGoDetailClick : function() {
+			this.trigger('task-detail', this.model);
+			//app.router.navigate('task/' + this.model.get('id'));
+		},
+
+		focus : function() {
+			this.$el.find('>.title').focus();
+			return this;
 		}
 	});
 
-	return HomeView;
+	return View;
 });

@@ -3,7 +3,7 @@ define(['marionette', 'backbone', 'underscore',], function (Marionette, Backbone
 		tagName : 'li',
 		template : _.template('<a><%=text%></a>'),
 		//template : _.template('<a><%=text%></a>'),
-		className : 'menu_item menu_check',
+		className : 'menu-item menu_check',
 
 		checkStatus : false,
 

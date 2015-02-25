@@ -2,7 +2,7 @@ define(['marionette', 'backbone', 'underscore', 'views/MenuList'], function (Mar
 	var SubMenu = Marionette.Layout.extend({
 		tagName : 'li',
 		template : _.template('<a><%=text%></a>'),
-		className : 'menu_item menu_sub dropdown-submenu',
+		className : 'menu-item menu_sub dropdown-submenu',
 		events : {
 			'click' : 'onClick',
 			'mouseover' : 'onHover',

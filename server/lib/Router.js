@@ -63,6 +63,18 @@ Request.prototype.init = function(req, options) {
 
 };
 
+Request.prototype.getBody = function(next) {
+	//TODO direct output the body if body already read
+	
+	var buffer = '';
+	this.request.on('data', function(data) {
+		buffer += data
+	});
+	this.request.once('end', function() {
+		next(null, buffer.toString());
+	});
+};
+
 var Response = function(res, options) {
 	this.init(res, options);
 };
@@ -179,6 +191,11 @@ Router.prototype.get = function(reg, func) {
 Router.prototype.post = function(reg, func) {
 	this.addCallback('post', reg, func);
 };
+
+Router.prototype.delete = function(reg, func) {
+	this.addCallback('delete', reg, func);
+};
+
 
 Router.prototype.use = function(string, router) {
 	if (!(router instanceof Router)) throw new Error('router is not a Router');

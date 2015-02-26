@@ -1,6 +1,7 @@
 define(
 ['backbone', 'underscore', 'jquery', 'app/app'],
 function (Backbone, _, $, app) {
+	var emptyFn = function() {};
 	var utils = {};
 	var get = utils.get = function(path ,data, callback) {
 		ajax('GET', path, data, callback);
@@ -11,6 +12,7 @@ function (Backbone, _, $, app) {
 	};
 
 	var ajax = utils.ajax = function(method, path, data, callback) {
+		callback = typeof(callback) == 'function' ? callback : emptyFn;
 		method = method || 'GET';
 		$.ajax({
 			url : path,
@@ -20,9 +22,11 @@ function (Backbone, _, $, app) {
 			dataType : 'json',
 			processData : method == 'GET',
 			success : function(rep) {
-				var preProcess = null;
-				if (!rep || rep.error) preProcess = onError(rep);
-				if (preProcess) return;
+				//var preProcess = null;
+				//if (!rep || rep.error) preProcess = onError(rep);
+				//if (preProcess) return;
+				if (!rep) throw "no response";
+				if (rep.error) throw rep.error;
 				callback(rep);
 			},
 

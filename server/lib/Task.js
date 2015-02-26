@@ -20,6 +20,36 @@ Task.findByPerson = function(person, next) {
 	});
 };
 
+Task.findByTask = function(task, next) {
+	if (!(task instanceof Task)) throw new Error('task is not a Task');
+	var sql = "SELECT task.* FROM task2task LEFT JOIN task ON task.id = task2task.task_id WHERE task2task.parent_id=? AND task.id IS NOT NULL ORDER BY sort ASC";
+	Data.query(sql, [task.id], function(err, rows) {
+		var tasks = [];
+		rows.forEach(function(row) {
+			var task = new Task();
+			task.loadObj(row);
+			tasks.push(task);
+		});
+		next(null, tasks);
+	});
+};
+
+Task.prototype.parentTo = function(task, sort, next) {
+	if (!(task instanceof Task)) throw new Error('task is not a Task');
+	var sql = "DELETE FROM task2task WHERE task_id=? AND parent_id=?";
+	Data.query(sql, [this.id, task.id], function(err, rows) {
+		if (err) throw err;
+		var post = {
+			task_id : this.id,
+			parent_id : task.id,
+			sort : sort,
+		};
+		sql = "INSERT INTO task2task SET ?";
+		Data.query(sql, [post], next);
+	});
+
+};
+
 Task.prototype.assignTo = function(person, sort, next) {
 	if (!this.id) throw new Error('no task id');
 	var self = this;

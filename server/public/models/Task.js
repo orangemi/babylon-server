@@ -4,12 +4,13 @@ function (Backbone, _, $, app, Utils) {
 
 	var Model = Backbone.Model.extend({
 
-		save : function(options) {
+		save : function(options, next) {
 			options = options || {};
 			var id = this.id || '';
-			var data = options.empty ? {} : this.getJSON();
-			Utils.post('task/' + id, data, function() {
-
+			var post = options.empty ? {} : this.getJSON();
+			Utils.post('task/' + id, post, function(rep) {
+				if (rep.id) this.id = rep.id;
+				if (typeof(next) == 'function') next(rep);
 			});
 		},
 
@@ -17,12 +18,18 @@ function (Backbone, _, $, app, Utils) {
 
 		},
 
-		assignTo : function(person) {
-			if (!this.id) {
-				console.error('Task can not be assign without id.');
-				return;
-			}
+		assignTo : function(person, next) {
+			if (!this.id) throw 'Task can not be assign without id.';
+		},
 
+		parentTo: function(task, sort, next) {
+			if (!this.id) throw 'Task can not be parent without id.';
+			var uri = ['task', this.id, 'parent'].join('/');
+			var post = {
+				parent: task.id,
+				sort: sort,
+			};
+			Utils.post(uri, post, next);
 		},
 
 		getJSON : function() {

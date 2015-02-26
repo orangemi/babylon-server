@@ -33,17 +33,17 @@
 	.task-line .assignee { margin: 0 10px; }
 
 .task-detail { }
-	.task-detail .panel { padding: 8px 6px; border-bottom: solid 1px #ccc; font-size: 14px; }
+	.task-detail .panel { padding: 8px 6px; border-bottom: solid 1px #ccc; font-size: 14px; display: flex; }
+	.task-detail .panel-value { flex: 1; }
 		.task-detail>.panel>.icon { width: 30px; }
-	.task-detail .title-panel { height: 20px; }
-		.title-panel .title { display: inline-block; font-size: 18px; }
+	.task-detail .title-panel { min-height: 20px;  }
+		.title-panel .title { vertical-align: top; min-height: 18px; border: solid 1px transparent; resize: none; font-size: 18px; }
+		.title-panel .title:hover,.title-panel .title:focus { border: solid 1px #eee; }
 	.tag-panel { }
 		.tag-panel .tags { display: inline-flex; }
 		.tag-panel .tag { border: solid 1px #ccc; padding: 2px 4px; background-color: #eee; display: inline-block; border-radius: 4px; line-height: 12px; margin-right: 10px; }
 		.tag-panel .tag-name { display: inline-block; font-size: 12px; }
 		.tag-panel .icon-remove { vertical-align: -1px; }
-	}
-
 
 .input-box-search { width: 300px; }
 	.input-box-search .icon-dropdown { width: 25px; line-height: 38px; text-align: center; }

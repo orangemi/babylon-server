@@ -83,11 +83,30 @@ Post a new Task
 `POST`: Modify the task
 * method: `GET` / `POST`
 * Params:
-  * Not finished.
+  * same as POST /task .
+* Return:
+  * same as POST /task .
+
+### /task/:id/parent
+assign the task to parent task
+* method: `POST` / `DELETE`
+* Params:
+  * `parent`: parent task id
+  * `sort`: sort
 * Return:
   * Not finished.
 
-### /task/:id/subtask
+### /task/:id/assign
+assign the task to 
+* method: `POST` / `DELETE`
+* Params:
+  * `parent`: parent task id
+  * `sort`: sort
+* Return:
+  * Not finished.
+
+
+### /task/:id/sub
 Get subtasks of the task
 * method: `GET`
 * Params:

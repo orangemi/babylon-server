@@ -52,8 +52,12 @@ function (Backbone, _, DialogView, HomeView, Models) {
 			this.render().bodyRegion.reset();
 		},
 
-		goTask : function(id) {
-			
+		goTask : function(id, model) {
+			var self = this;
+			require(['views/TaskDetail'], function(TaskDetailView) {
+				var view = new TaskDetailView({model: model});
+				self.app.view.detailRegion.show(view);
+			});
 		},
 
 		goLogin : function() {

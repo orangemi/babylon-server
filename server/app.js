@@ -28,6 +28,7 @@ router.get(/\.\w+$/, function(req, res) {
 		res.write(result);
 		then();
 	}).catch(function(then, error) {
+		console.error(error);
 		res.status(404, 'File not Found');
 		res.statusCode = 404;
 		res.write('File not Found');
@@ -54,12 +55,10 @@ router.get('/login', function(req, res) {
 	}).then(function(then, person) {
 		var session = Session.set(person.id);
 		res.setCookie('session', session);
-		res.write('login success');
+		res.json({ result: 'success' });
 		then();
 	}).catch(function(then, error) {
-		console.error(error.stack);
-		res.write(error.toString());
-		res.write(error.stack.toString());
+		res.json({ error: error.toString() });
 		then();
 	}).finally(function() {
 		res.end();

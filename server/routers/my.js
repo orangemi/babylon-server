@@ -2,6 +2,7 @@ var Then = require('thenjs');
 var Router = require('../lib/Router');
 var Person = require('../lib/Person');
 var Task = require('../lib/Task');
+var extend = require('../lib/extend.js');
 
 var Session = require('../session');
 
@@ -18,7 +19,7 @@ router.get('/', function(req, res) {
 		res.write('this is my homepage #' + personId);
 		then();
 	}).catch(function(then, error) {
-		res.write(error.toString());
+		res.json({ error: error.toString() });
 		then();
 	}).finally(function() {
 		res.end();
@@ -27,11 +28,22 @@ router.get('/', function(req, res) {
 
 router.get('/task', function(req, res) {
 	Then(function(then) {
-		Person.load(1, then);
+		Session.get(req.cookie.session, then);
+	}).then(function(then, personId) {
+		Person.load(personId, then);
 	}).then(function(then, person) {
 		Task.findByPerson(person, then);
 	}).then(function(then, tasks) {
-		res.json(tasks);
+		var result = [];
+		tasks.forEach(function(task, i) {
+			var t = task.display();
+			t.sort = i + 1;
+			result.push(t);
+		});
+		res.json(result);
+		then();
+	}).catch(function(then, error) {
+		res.json({ error: error.toString() });
 		then();
 	}).finally(function() {
 		res.end();

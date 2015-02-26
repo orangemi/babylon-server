@@ -11,7 +11,8 @@ function (Marionette, _, app, Html, MenuView, TaskList, TaskModel) {
 			"leftRegion" : ">.left",
 			"bodyRegion" : ">.body",
 			"bottomRegion" : ">.bottom",
-			"popRegion" : ">.pop",
+			"detailRegion" : ">.content>.detail",
+			"popRegion" : ">.popup",
 		},
 
 		events : {
@@ -26,7 +27,7 @@ function (Marionette, _, app, Html, MenuView, TaskList, TaskModel) {
 			this.taskList.render().$el.appendTo(this.$el.find('.content .list .tasks'));
 
 			//TODO add a sample
-			this.taskList.collection.add({});
+			// this.taskList.collection.add({});
 
 			this.onViewChange('MyTask');
 

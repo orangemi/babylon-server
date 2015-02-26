@@ -11,7 +11,7 @@ var Session = module.exports = {
 	set : function(value, expire, options) {
 		var self = this;
 		options = options || {};
-		expire = expire || 30 * 60;
+		expire = expire || 8 * 60 * 60;
 
 		var date = new Date().getTime().toString();
 		var rand = Math.random().toString().substr(2);
@@ -33,7 +33,11 @@ var Session = module.exports = {
 			next(new Error('no Session'));
 			return;
 		}
-		connection.get(session, next);
+		connection.get(session, function(err, res) {
+			if (!res) return next(new Error('no Session'));
+			//if (!res) throw 'no session';
+			next(err, res);
+		});
 	},
 
 	clear : function(session) {

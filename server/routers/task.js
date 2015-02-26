@@ -10,7 +10,6 @@ var router = module.exports = new Router();
 router.post('/', function(req, res) {
 	var current_task;
 	var current_person;
-	// console.log(id, req);
 
 	Then(function(then) {
 		Session.get(req.cookie.session, then);
@@ -22,7 +21,7 @@ router.post('/', function(req, res) {
 	}).then(function(then, post) {
 		post = JSON.parse(post);
 		var task = new Task();
-		task.creator = person.id;
+		task.creator = current_person.id;
 		task.title = post.title || '';
 		task.description = post.description || '';
 		task.status = Task.STATUS.NORMAL;
@@ -95,24 +94,23 @@ router.get(/^\/(\d+)\/sub\/?$/, function(req, res) {
 });
 
 router.post(/^\/(\d+)\/?$/, function(req, res) {
-	console.log(req.match);
 	var id = req.path[2];
 	var current_task;
 	var current_person;
 
 	Then(function(then) {
 		var personId = Session.get(req.cookie.session);
+	}).then(function(then, personId) {
 		Person.load(personId, then);
 	}).then(function(then, person) {
 		current_person = person;
-		var task = new Task();
-		task.creator = person.id;
-		task.save(then);
+		Task.load(id, then);
 	}).then(function(then, task) {
 		current_task = task;
-		task.assignTo(current_person, 1, then);
-	}).then(function(then, task) {
-		res.write(JSON.stringify(task.display()));
+		res.json(task.display());
+		then();
+	}).catch(function(then, error) {
+		res.json({ error: error.toString() });
 		then();
 	}).finally(function() {
 		res.end();

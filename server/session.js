@@ -6,6 +6,8 @@ var memcacheConfig = JSON.parse(fs.readFileSync('./configs/memcache.json'));
 var connection = new memcache.Client(memcacheConfig.port, memcacheConfig.host);
 connection.connect();
 
+var emptyFn = function() {};
+
 var Session = module.exports = {
 	sessions : {},
 	set : function(value, expire, options) {
@@ -27,6 +29,7 @@ var Session = module.exports = {
 	},
 
 	get : function(session, next) {
+		next = typeof(next) == 'function' ? next : emptyFn;
 		// if (session) return this.sessions[session];
 		// return null;
 		if (!session) {
@@ -35,7 +38,6 @@ var Session = module.exports = {
 		}
 		connection.get(session, function(err, res) {
 			if (!res) return next(new Error('no Session'));
-			//if (!res) throw 'no session';
 			next(err, res);
 		});
 	},

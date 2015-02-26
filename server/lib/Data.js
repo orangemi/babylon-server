@@ -11,7 +11,10 @@ var Data = module.exports = function() {
 	this.init();
 };
 
-Data.query = connection.query.bind(connection);
+Data.query = function() {
+	console.log('SQL:', arguments[0], arguments[1]);
+	return connection.query.apply(connection, arguments);
+};
 
 Data.prototype.init = function() {
 	this.protoData = {};

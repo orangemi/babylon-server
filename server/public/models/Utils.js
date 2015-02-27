@@ -25,9 +25,13 @@ function (Backbone, _, $, app) {
 				//var preProcess = null;
 				//if (!rep || rep.error) preProcess = onError(rep);
 				//if (preProcess) return;
-				if (!rep) throw "no response";
-				if (rep.error) throw rep.error;
-				callback(rep);
+				try {
+					if (!rep) throw "no response";
+					if (rep.error) throw rep.error;
+					callback(rep);
+				} catch (e) {
+					app.showDialog({ icon: 'warning', title: 'Ajax Error', content: e });
+				}
 			},
 
 			error : function(xhr, status, error) {

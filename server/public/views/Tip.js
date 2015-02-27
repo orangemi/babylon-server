@@ -15,14 +15,12 @@ function (Marionette, _, app, Html) {
 			options = options || {};
 			this.content = options.content || '';
 			this.title = options.title || '';
-			this.icon = options.icon || '';
 		},
 
 		onRender : function() {
 			this.$el.find('>.content').html(this.content);
-			this.$el.find('>.top .title').html(this.title);
-			if (this.icon) this.$el.find('>.top .title-icon').addClass('icon-' + this.icon);
-			this.$el.find('>.bottom');
+			this.$el.find('>.top>.title').html(this.title);
+			var $bottom = this.$el.find('>.bottom');
 		},
 
 		onButtonCancelClick : function(evt) {

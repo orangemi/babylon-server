@@ -33,7 +33,6 @@ function (Marionette, _, app, Html, MenuView, TaskList, TaskModel) {
 
 			// var task = new TaskModel();
 			// task.save();
-			
 		},
 
 		onViewTypeClick : function(evt) {
@@ -61,7 +60,7 @@ function (Marionette, _, app, Html, MenuView, TaskList, TaskModel) {
 
 		showPop : function(view) {
 			this.popRegion.show(view);
-			var pops = this.$el.find('>.pop').removeClass('hide');
+			var pops = this.$el.find('>.popup').removeClass('hide');
 			view.on('close', function() {
 				if (pops.length == 1) pops.addClass('hide');
 			});

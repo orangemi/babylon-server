@@ -34,24 +34,37 @@ Task.findByTask = function(task, next) {
 	});
 };
 
-Task.prototype.parentTo = function(task, sort, next) {
+Task.prototype.assignToTask = function(task, sort, next) {
+	if (!this.id) throw new Error('no task id');
 	if (!(task instanceof Task)) throw new Error('task is not a Task');
-	var sql = "DELETE FROM task2task WHERE task_id=? AND parent_id=?";
-	Data.query(sql, [this.id, task.id], function(err, rows) {
-		if (err) throw err;
+	var self = this;
+	sort = sort || 1;
+	Then(function(then) {
+		//DELETE sort
+		var sql = "DELETE FROM task2task WHERE task_id=? AND parent_id=?";
+		Data.query(sql, [self.id, task.id], then);
+	}).then(function(then) {
+		//UPDATE insert
 		var post = {
-			task_id : this.id,
-			parent_id : task.id,
-			sort : sort,
+			sort: sort,
+			task_id: self.id,
+			parent_id: task.id,
 		};
-		sql = "INSERT INTO task2task SET ?";
-		Data.query(sql, [post], next);
-	});
+		var sql = "INSERT INTO task2task SET ?";
+		Data.query(sql, [post], then);
+	}).then(function(then, result) {
+		//UPDATE sort
+		var sql = "UPDATE task2task SET sort=sort+1 WHERE parent_id = ? AND sort >= ? AND task_id <> ?";
+		Data.query(sql, [task.id, sort, self.id], then);
+	}).finally(function() {
+		if (typeof(next) == 'function') next(null ,self);
+	})
 
 };
 
-Task.prototype.assignTo = function(person, sort, next) {
+Task.prototype.assignToPerson = function(person, sort, next) {
 	if (!this.id) throw new Error('no task id');
+	if (!(person instanceof Person)) throw new Error('person is not a Person');
 	var self = this;
 	sort = sort || 1;
 
@@ -70,8 +83,8 @@ Task.prototype.assignTo = function(person, sort, next) {
 		Data.query(sql, [post], then);
 	}).then(function(then, result) {
 		//UPDATE sort
-		var sql = "UPDATE person2task SET sort=sort+1 WHERE sort >= ? AND task_id <> ?";
-		Data.query(sql, [sort, self.id], then);
+		var sql = "UPDATE person2task SET sort=sort+1 WHERE person_id = ? AND sort >= ? AND task_id <> ?";
+		Data.query(sql, [person.id, sort, self.id], then);
 	}).finally(function() {
 		if (typeof(next) == 'function') next(null ,self);
 	})

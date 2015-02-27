@@ -6,6 +6,9 @@ function (Marionette, _, app, Html, Task) {
 		className : 'task-line flex',
 		template : _.template(Html),
 
+		assignType: null,
+		assignTo: null,
+
 		events : {
 			'keyup >.title'		: 'onTitleKeyUp',
 			'blur >.title'		: 'onBlur',
@@ -14,9 +17,14 @@ function (Marionette, _, app, Html, Task) {
 
 		initialize : function(options) {
 			options = options || {};
-			this.model = options.model || new Backbone.Model();
+			this.model = options.model || new Task();
+			
+			this.assignType = options.assignType;
+			this.assignTo = options.assignTo;
+
 			this.listenTo(this.model, 'remove', this.remove);
 			this.listenTo(this.model, 'change', this.onChange);
+			// this.listenTo(this.model, 'saved');
 		},
 
 		onChange : function() {
@@ -35,15 +43,22 @@ function (Marionette, _, app, Html, Task) {
 		},
 
 		onBlur : function() {
+			this.model.set('title', this.$el.find('.title').val());
 			this.model.save();
 		},
 
 		onTitleKeyUp : function(evt) {
+			var self = this;
 			if (evt.keyCode == 13) {
 				//ENTER
 				// evt.preventDefault();
 				var sort = this.model.get('sort') + 1;
-				this.trigger('enterPress', {sort: sort}, {focus: true});
+				var newTask = new Task({sort: sort});
+				var oldTask = this.model;
+				newTask.save({}, function() {
+					newTask.assignTo(self.assignType, self.assignTo);
+				});
+				this.trigger('enterPress', newTask, oldTask, {focus: true});
 			}
 		},
 

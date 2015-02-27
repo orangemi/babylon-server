@@ -55,10 +55,10 @@ router.get('/login', function(req, res) {
 	}).then(function(then, person) {
 		var session = Session.set(person.id);
 		res.setCookie('session', session);
-		res.json({ result: 'success' });
+		res.json(person.display());
 		then();
 	}).catch(function(then, error) {
-		res.json({ error: error.toString() });
+		res.json({ error: error.toString(), stack: error.stack });
 		then();
 	}).finally(function() {
 		res.end();

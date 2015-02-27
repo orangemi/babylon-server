@@ -58,17 +58,15 @@
 
 /* icons */
 @font-face {
-	font-family: 'Glyphicons Halflings';
-	/*src: url('../fonts/glyphicons-halflings-regular.eot');*/
-	src:	url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+	font-family: 'Glyphicons Regular';
+	src:	url('../fonts/glyphicons-regular.eot') format('embedded-opentype'),
 			url('../fonts/glyphicons-regular.woff2') format('woff2'),
-			url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'),
-			url('../fonts/glyphicons-halflings-regular.woff') format('woff'),
-			url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'),
-			url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+			url('../fonts/glyphicons-regular.woff') format('woff'),
+			url('../fonts/glyphicons-regular.ttf') format('truetype'),
+			url('../fonts/glyphicons-regular.svg') format('svg');
 }
 
-.icon { display: inline-block; font-family: 'Glyphicons Halflings'; }
+.icon { display: inline-block; font-family: 'Glyphicons Regular'; }
 	.icon-dropdown:before { content: "\e602"; }
 	.icon-cog:before { content: "\e137"; }
 	.icon-remove:before { content: "\e208"; }

@@ -75,14 +75,24 @@ Data.prototype.save = function(next) {
 	var self = this;
 	var Class = this.constructor;
 	var post = {};
+	var count = 0;
 	next = typeof(next) == 'function' ? next : function() {};
 
 	for (var key in Class.columns) {
-		if (self[key] !== null && self[key] != self.protoData[key]) post[key] = self[key];
+		if (self[key] !== null && self[key] != self.protoData[key]) {
+			post[key] = self[key];
+			count++;
+		}
+	}
+
+	if (!count) {
+		//no need to update
+		next(null, self);
+		return;
 	}
 
 	if (self.id) {
-		Data.query("UPDATE ?? SET ?? WHERE id=?", [Class.tableName, post, self.id], function(err, result) {
+		Data.query("UPDATE ?? SET ? WHERE id=?", [Class.tableName, post, self.id], function(err, result) {
 			if (err) return next(err);
 			next(null, self);
 		});

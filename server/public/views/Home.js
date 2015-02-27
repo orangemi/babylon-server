@@ -42,7 +42,6 @@ function (Marionette, _, app, Html, MenuView, TaskList, TaskModel) {
 			var menuView = new MenuView({menus : [
 				{ type: 'button', value: 'MyTask', text: 'My Task', },
 				{ type: 'button', value: 'MyProject', text: 'My Project', },
-				
 			]});
 
 			menuView.show();

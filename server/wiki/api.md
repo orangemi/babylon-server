@@ -87,20 +87,12 @@ Post a new Task
 * Return:
   * same as POST /task .
 
-### /task/:id/parent
-assign the task to parent task
-* method: `POST` / `DELETE`
-* Params:
-  * `parent`: parent task id
-  * `sort`: sort
-* Return:
-  * Not finished.
-
 ### /task/:id/assign
-assign the task to 
+assign the task to someone or parent task
 * method: `POST` / `DELETE`
 * Params:
-  * `parent`: parent task id
+  * `target`: target task's id or person's id
+  * `type`: assign to target `task` or target `person`
   * `sort`: sort
 * Return:
   * Not finished.

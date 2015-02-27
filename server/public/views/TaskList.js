@@ -1,6 +1,6 @@
 define([
-'marionette', 'underscore', 'app/app', 'text!html/TaskList.html', 'views/TaskLine', 'models/TaskCollection'],
-function (Marionette, _, app, Html, TaskLineView, TaskCollection) {
+'marionette', 'underscore', 'app/app', 'text!html/TaskList.html', 'views/TaskLine', 'models/TaskCollection', 'models/Task',],
+function (Marionette, _, app, Html, TaskLineView, TaskCollection, Task) {
 	var View = Marionette.Layout.extend({
 		tagName : 'ul',
 		className : 'task-list',
@@ -22,17 +22,23 @@ function (Marionette, _, app, Html, TaskLineView, TaskCollection) {
 		},
 
 		onAddClick : function() {
+			var self = this;
 			var sort = this.collection.length + 1;
-			this.collection.add({ sort: sort });
+			var task = new Task({ sort: sort });
+			task.save({}, function() {
+				task.assignTo(self.collection.assignType, self.collection.assignTo);
+			});
+			this.collection.add(task, { focus: true });
 		},
 
-		onEnterPress : function(task, options) {
+		onEnterPress : function(newTask, oldTask, options) {
 			options = _.extend({
-				at: task.sort - 1,
+				at: newTask.get('sort') - 1,
 			}, options, {
 				focus : true,
 			});
-			this.collection.add(task, options);
+			this.collection.add(newTask, options);
+			// oldTask.assignTo(this.collection.assignType, this.collection.assignTo);
 		},
 
 		onRemoveTask : function(task, collection, options) {
@@ -48,10 +54,11 @@ function (Marionette, _, app, Html, TaskLineView, TaskCollection) {
 
 		onAddTask : function(task, collection, options) {
 			options = options || {};
-			var taskLine = new TaskLineView({ model: task });
+			var taskLine = new TaskLineView({ model: task, assignType: this.collection.assignType, assignTo: this.collection.assignTo, });
 			var sort = task.get('sort') || 1;
 			var $el = taskLine.render().$el.insertAfter(this.$el.children().eq(sort - 1));
 			this.listenTo(taskLine, 'enterPress', this.onEnterPress);
+			this.listenTo(task, 'saved', this.onTaskSaved);
 
 			//when insert a row every task after it should add their sort value
 			// this.collection.
@@ -67,6 +74,9 @@ function (Marionette, _, app, Html, TaskLineView, TaskCollection) {
 
 		onRemoveTask : function(task, options) {
 
+		},
+
+		onTaskSaved : function(task) {
 		},
 
 	});

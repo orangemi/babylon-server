@@ -1,18 +1,16 @@
 <script src="vender/jquery-2.0.3.js"></script>
 <style>
+
 @font-face {
-	font-family: 'Glyphicons Halflings';
-	/*src: url('../fonts/glyphicons-halflings-regular.eot');*/
-	src:	url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+	font-family: 'Glyphicons Regular';
+	src:	url('../fonts/glyphicons-regular.eot') format('embedded-opentype'),
 			url('../fonts/glyphicons-regular.woff2') format('woff2'),
-			url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'),
-			url('../fonts/glyphicons-halflings-regular.woff') format('woff'),
-			url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'),
-			url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+			url('../fonts/glyphicons-regular.woff') format('woff'),
+			url('../fonts/glyphicons-regular.ttf') format('truetype'),
+			url('../fonts/glyphicons-regular.svg') format('svg');
 }
 
-
-tr.row { font-family: 'Glyphicons Halflings'; font-size: 18px; }
+tr { font-family: 'Glyphicons Regular'; font-size: 40px; }
 table#result { width: 100%; }
 td { text-align: center; }
 
@@ -25,14 +23,14 @@ td { text-align: center; }
 <script>
 var i,j,k;
 var $tr,$td;
-var count = 50;
+var count = 25;
 $tr = $("<tr>").appendTo($('table'));
 $("<th>").html('start').appendTo($tr);
 for (i = 0; i < count; i++) {
 	$("<th>").html(i).appendTo($tr);
 }
 
-for (j = 0; j < 100; j++) {
+for (j = 0; j < 25; j++) {
 	$tr = $("<tr>").appendTo($('table')).addClass('row');
 	$("<th>").html(j * count).appendTo($tr);
 	for (i = 0; i < count; i++) {

@@ -1,0 +1,73 @@
+.clear { clear: both; }
+.hide { display:none; }
+.flex { display: -webkit-flex; display: flex; }
+
+/* icons */
+@font-face {
+	font-family: 'Glyphicons Regular';
+	src:	url('../fonts/glyphicons-regular.eot') format('embedded-opentype'),
+			url('../fonts/glyphicons-regular.woff2') format('woff2'),
+			url('../fonts/glyphicons-regular.woff') format('woff'),
+			url('../fonts/glyphicons-regular.ttf') format('truetype'),
+			url('../fonts/glyphicons-regular.svg') format('svg');
+}
+
+.icon { display: inline-block; font-family: 'Glyphicons Regular'; }
+	.icon-dropdown:before { content: "\e602"; }
+	.icon-cog:before { content: "\e137"; }
+	.icon-remove:before { content: "\e208"; }
+	.icon-remove-circle:before { content: "\e198"; }
+	.icon-search:before { content: "\e028"; }
+	.icon-option-v:before { content: "\e518"; }
+	.icon-uncheck:before { content: "\e154"; }
+	.icon-check:before { content: "\e153"; }
+	.icon-project:before { content: "\e072"; }
+	.icon-tags:before { content: "\e067"; }
+	.icon-right:before { content: "\e224"; }
+	.icon-warning:before { content: "\e079"; }
+
+.input {
+	box-sizing: border-box;
+	display: inline-block; height: 38px; padding: 6px 12px;
+	font-size: 14px; line-height: 1.42; color: #555;
+	background-color: #fff; background-image: none;
+	border: 1px solid #ccc; border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.btn {
+	display: inline-block; height: 38px; padding: 6px 12px;  font-size: 14px; font-weight: 400;
+	text-align: center; white-space: nowrap; vertical-align: middle; outline: none;
+	background-color: #fff; background-image: none; cursor: pointer;
+	border: 1px solid transparent; border-radius: 4px; line-height: 1.42;
+
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.btn.btn-normal { color: #333; background-color: #fff; border-color: #ccc; }
+	.btn.btn-normal:hover { color: #333; background-color: #e6e6e6; border-color: #adadad; }
+.btn.btn-green { color: #fff; background-color: #5cb85c; border-color: #4cae4c; }
+	.btn.btn-green:hover { color: #fff; background-color: #449d44; border-color: #398439; }
+
+.login-panel { width: 200px; margin: 0 auto; margin-top: 150px; text-align: center; }
+.login-panel .btn, .login-panel .input { display: block; width: 100%; }
+
+.dialog { position: absolute; margin: 0 auto; top: 30%;	max-width: 30%;
+	min-width: 350px; min-height: 200px; background: #fff;
+	left: 0; right: 0; padding: 10px; box-shadow: 0 0 15px 5px #bbb;
+	border: solid 1px #999; border-radius: 5px;
+}
+.dialog>.top { min-height: 30px; line-height: 30px; font-size: 18px; }
+.dialog>.top .title { font-size: 20px; font-weight: bold; flex: 1; padding: 0; }
+.dialog>.top .title-icon { font-weight: bold; margin-left: 10px; margin-right: 5px; }
+.dialog>.bottom { height: 40px; margin-top: 10px; }
+.dialog>.bottom .btn { float: right; margin-left: 8px; }
+.dialog>.content { margin: 5px 0; padding: 5px 5px; min-height: 100px; border-top: solid 1px #ccc; border-bottom: solid 1px #ccc }

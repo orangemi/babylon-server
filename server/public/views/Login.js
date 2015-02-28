@@ -2,7 +2,7 @@ define([
 'marionette', 'underscore', 'app/app', 'text!html/Login.html', 'views/Menu', 'app/models'],
 function (Marionette, _, app, Html, MenuView, Models) {
 	var View = Marionette.Layout.extend({
-		className : 'login_panel',
+		className : 'login-panel',
 		template : _.template(Html),
 		events : {
 			'click .login' : 'onLoginClick',
@@ -31,12 +31,8 @@ function (Marionette, _, app, Html, MenuView, Models) {
 				self.hideLoading();
 				if (!rep || rep.error) return self.onLoginError(rep.output);
 
-				app.data.nickname = rep.output.nick;
 				//TODO show nickname
-
-				app.data.loadCollection(function() {
-					app.router.navigate('user', {trigger : true});
-				});
+				window.location.href = 'index.html';
 			});
 		},
 

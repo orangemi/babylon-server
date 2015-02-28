@@ -35,8 +35,8 @@ router.post(/^\/((\d+)\/?)?$/, function(req, res) {
 		task.status = post.status || task.status || Task.STATUS.NORMAL;
 		task.type = post.type || task.type || Task.TYPE.TASK;
 		task.complete = post.complete || task.complete || Task.COMPLETE.INCOMPLETE;
-		task.createtime = post.createtime || task.createtime || Date.now();
-		task.updatetime = post.updatetime || task.updatetime || Date.now();
+		task.createtime = post.createtime || task.createtime || Math.floor(Date.now() / 1000);
+		task.updatetime = post.updatetime || task.updatetime || Math.floor(Date.now() / 1000);
 		task.scheduletime = post.scheduletime || task.scheduletime || 0;
 		task.save(then);
 
@@ -156,8 +156,8 @@ router.post(/^\/(\d+)\/comment\/?$/, function(req, res) {
 		comment.type = History.TYPE.COMMENT;
 		comment.status = History.STATUS.NORMAL;
 		comment.message = post.message;
-		comment.createtime = Date.now();
-		comment.updatetime = Date.now();
+		comment.createtime = Math.floor(Date.now() / 1000);
+		comment.updatetime = Math.floor(Date.now() / 1000);
 		comment.save(then);
 
 	}).then(function(then, history) {

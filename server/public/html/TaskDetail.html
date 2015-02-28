@@ -10,7 +10,7 @@
 <div class="panel tag-panel">
 	<span class="icon icon-tags"></span>
 	<ul class="panel-value tag-list">
-		<li class="tag-input"><input class="new-tag" /></li>
+		<li class="tag-input flex1"><input class="new-tag" /></li>
 	</ul>
 </div>
 <div class="panel description-panel">
@@ -19,21 +19,12 @@
 </div>
 <div class="sub-tasks-panel"></div>
 <div class="panel comment-panel">
-	<ul class="comment-list">
-		<li class="comment-line flex">
-			<span class="icon icon-chat"></span>
-			<div class="comment-content">
-				<span class="post-user">Me</span> - 
-				<span class="post-time">Just Now</span>
-				<div class="post-content">Some Comment</div>
-			</div>
-		</li>
-	</ul>
-</div>
-<div class="panel comment-post-panel">
-	<span class="icon icon-chat"></span>
-	<div class="comment-post-content">
-		<textarea class="comment-input" placeholder="Comment"></textarea>
-		<button class="comment-btn">Comment</button>
+	<div class="post-section flex">
+		<span class="comment-head"></span>
+		<div class="flex1">
+			<textarea class="comment-input" placeholder="Comment"></textarea>
+			<button class="btn btn-normal comment-btn">Comment</button>
+		</div>
 	</div>
+	<ul class="comment-list"></ul>
 </div>

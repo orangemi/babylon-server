@@ -28,10 +28,11 @@ function (Backbone, _, $, app) {
 				try {
 					if (!rep) throw "no response";
 					if (rep.error) throw rep.error;
-					callback(rep);
 				} catch (e) {
 					app.showDialog({ icon: 'warning', title: 'Ajax Error', content: e });
+					console.error(e);
 				}
+				callback(rep);
 			},
 
 			error : function(xhr, status, error) {

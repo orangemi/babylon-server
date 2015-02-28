@@ -16,10 +16,7 @@ function (Backbone, _, $, app, Utils, Task) {
 			}
 
 			callback = typeof(callback) == 'function' ? callback : emptyFn;
-
-			console.log('before remove:', this.length);
 			this.remove(this.models);
-			console.log('after  remove:', this.length);
 
 			switch (type) {
 				case 'my': return this.fetchMy(callback);	
@@ -49,6 +46,7 @@ function (Backbone, _, $, app, Utils, Task) {
 				rep.forEach(function(task) {
 					self.add(task);
 				})
+				// self.add(rep);
 			});
 		},
 	});

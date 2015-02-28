@@ -1,16 +1,17 @@
 .clear { clear: both; }
 .hide { display:none; }
 .flex { display: -webkit-flex; display: flex; }
+.flex1 { flex: 1; }
 
 #home { position: absolute; top: 0; bottom: 0; left: 0; right: 0; display: flex; flex-direction: column; }
 #home>.top { height: 60px; }
-	.top .search-panel { flex: 1; }
+	.top .search-panel { }
 	.top .profile-panel { width: 300px; }
 	.top .profile-panel .profile_img { display: inline-block; width: 28px; height: 28px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; }
 	.top .profile-panel .profile_name { display: inline-block; }
-#home>.content { flex: 1; }
+#home>.content { }
 #home>.content>.list { flex: 2; min-width: 200px; }
-#home>.content>.detail { flex: 1; }
+#home>.content>.detail { }
 #home>.bottom { height: 20px; }
 #home>.popup { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(0,0,0,0.1); }
 
@@ -28,13 +29,13 @@
 .task-line:hover .sort { display: none; }
 .task-line .hand .icon-option-v { margin-left: -5px; width: 6px; text-align: center; }
 .task-line .assignee { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; margin: 0 10px; }
-.task-line .title { border: none; display: inline-block; flex: 1; outline: none; font-size: 16px; margin: 0 5px; }
+.task-line .title { border: none; display: inline-block; outline: none; font-size: 16px; margin: 0 5px; }
 .task-line .complete { margin: -3px 5px 0 10px; font-size: 20px; }
 
 .task-detail { }
 .task-detail .panel { padding: 8px 6px; border-bottom: solid 1px #ccc; font-size: 14px; display: flex; }
 .task-detail .panel-value { flex: 1; }
-.task-detail .panel>.icon { width: 30px; }
+.task-detail .panel>.icon { width: 30px; font-size: 14px; text-align: center; }
 .task-detail .title-panel { min-height: 20px;  }
 .task-detail .title-panel .title { vertical-align: top; min-height: 18px; border: solid 1px transparent; resize: none; font-size: 18px; }
 .task-detail .title-panel .title:hover, .title-panel .title:focus { border: solid 1px #ccc; }
@@ -44,15 +45,19 @@
 .task-detail .tag-panel { }
 .task-detail .tag-panel .tag-list { display: inline-flex; }
 
-.task-detail .comment-panel { border-bottom: none; }
-.comment-line .comment-content { flex: 1; }
-.comment-line>.icon { width: 30px; }
-.comment-line .post-user { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; margin-right: 10px; }
-.comment-post-panel .comment-post-content { flex: 1; }
-.comment-post-panel .comment-input { display: block; width: 100%; }
-.comment-post-panel .comment-btn { }
+.task-detail .comment-panel { display: block; }
+.comment-panel .comment-head { width: 30px; }
+.comment-panel .comment-post { }
+.comment-panel .comment-input { display: block; width: 100%; }
+.comment-panel .comment-btn { }
 
-.tag-input { flex: 1; }
+.task-detail .comment-list { margin-top: 5px; }
+.comment-line .comment-content { }
+.comment-line>.flex>.icon { width: 30px; font-size: 14px; text-align: center; }
+.comment-line .post-user-img { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; }
+.comment-line .post-content { min-height: 20px; margin: 0; }
+
+.tag-input { }
 .new-tag { width: 100%; border: solid 1px transparent; }
 .new-tag:focus, .new-tag:hover { border: solid 1px #ccc; }
 .tag-line { border: solid 1px #ccc; padding: 2px 4px; background-color: #eee; display: inline-block; border-radius: 4px; line-height: 12px; margin-right: 10px; }

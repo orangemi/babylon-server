@@ -1,6 +1,6 @@
 define([
-'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/TagLine', 'models/Task'],
-function (Marionette, _, app, Html, MenuView, TaskListView, TagLineView, Task) {
+'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'models/Task', 'models/CommentCollection', 'models/Utils'],
+function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, Task, CommentCollection, Utils) {
 	var View = Marionette.Layout.extend({
 		className : 'task-detail',
 		template : _.template(Html),
@@ -8,6 +8,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, TagLineView, Task) {
 		events: {
 			'blur .title' : 'onTitleBlur',
 			'blur .description' : 'onDescriptionBlur',
+			'click .comment-btn' : 'onCommentClick',
 		},
 
 		initialize: function(options) {
@@ -15,6 +16,9 @@ function (Marionette, _, app, Html, MenuView, TaskListView, TagLineView, Task) {
 			this.model = options.model || new Task();
 			this.listenTo(this.model, 'change', this.onChange);
 			this.listenTo(this.model, 'remove', this.onRemove);
+
+			this.commentsCollection = new CommentCollection();
+			this.listenTo(this.commentsCollection, 'add', this.onAddComment);
 		},
 
 		onRemove :function() {
@@ -24,6 +28,19 @@ function (Marionette, _, app, Html, MenuView, TaskListView, TagLineView, Task) {
 		onChange : function() {
 			this.$el.find('.title-panel .title').val(this.model.get('title'));
 			this.$el.find('.description-panel .description').html(this.model.get('description'));
+		},
+
+		onCommentClick : function() {
+			var self = this;
+			var $el = this.$el.find('.comment-input');
+			var uri = ['task', this.model.get('id'), 'comment'].join('/');
+			var post = {
+				message : $el.val(),
+			};
+
+			Utils.post(uri, post, function(res) {
+				self.commentsCollection.add(res);
+			});
 		},
 
 		onTitleBlur : function() {
@@ -36,10 +53,17 @@ function (Marionette, _, app, Html, MenuView, TaskListView, TagLineView, Task) {
 			this.model.save();
 		},
 
+		onAddComment : function(comment) {
+			var $el = this.$el;
+			var view = new CommentLineView({ model : comment });
+			view.render().$el.prependTo($el.find('.comment-list'));
+		},
+
 		onRender : function() {
 			this.onChange();
 			this.getSubTasks();
 			this.getTags();
+			this.getComments();
 		},
 
 		getTags : function() {
@@ -50,6 +74,10 @@ function (Marionette, _, app, Html, MenuView, TaskListView, TagLineView, Task) {
 				var tag = new TagLineView();
 				tag.render().$el.insertBefore($el.find('.tag-panel .tag-input'));				
 			}
+		},
+
+		getComments : function() {
+			this.commentsCollection.fetch(this.model.get('id'));
 		},
 
 		getSubTasks : function() {

@@ -48,7 +48,8 @@ Data.load = function(id, next) {
 	});
 };
 
-Data.find = function(obj, next) {
+Data.find = function(obj, options, next) {
+	options = options || {};
 	var self = this;
 	var Class = this;
 

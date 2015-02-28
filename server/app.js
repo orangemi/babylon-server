@@ -45,11 +45,14 @@ router.get('/login', function(req, res) {
 
 	Then(function(then) {
 		if (!email) throw new Error('no email');
-		Person.find({email:email}, then);
+		Person.find({
+			email: email,
+		}, {}, then);
 	}).then(function(then, persons) {
 		var person = persons[0];
 		// console.log(persons);
 		if (!person) throw new Error('no user');
+		if (person.status != Person.STATUS.NORMAL) throw new Error('user status freeze');
 		if (person.password != password) throw new Error('password wrong');
 		return then(null, person);
 	}).then(function(then, person) {

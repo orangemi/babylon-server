@@ -68,6 +68,17 @@ router.get('/login', function(req, res) {
 	});
 });
 
+router.get('/search', function(req, res) {
+	var post;
+	var current_person;
+	var current_task;
+
+	Then(function(then) {
+		Session.get(req.cookie.session, then);
+	}).then(function(then, personId) {
+
+});
+
 router.use('/my', require('./routers/my'));
 router.use('/task', require('./routers/task'));
 

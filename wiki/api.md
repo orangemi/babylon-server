@@ -8,25 +8,22 @@ Simple rules here:
 ## 
 ## Auth API
 
-### /login
+### `POST` /login
 Login with email and password. It will use `session` in cookie if no email or password provided.
-* Method: `POST`
 * Params:
   * `email`
   * `password`
 * Return:
 
-### /register
-Register with email and password.
-* Method: `POST`
+### `POST` /register
+Register with email and password (Not finished)
 * Params:
   * `email`
   * `password`
 * Return:
 
-### /verify
+### `GET` /verify
 verify url from user's email-box (including CONFIRM mail and FORGET_PASS mail). Whether verify succeed or failure, this API will redirect user to a Html.
-* Method: `GET`
 * Params:
   * `code`
 * Return:
@@ -34,9 +31,12 @@ verify url from user's email-box (including CONFIRM mail and FORGET_PASS mail). 
 ## 
 ## User
 
-### /my
-### /my/task
-* method: `GET`
+### `GET` /my
+* Params:
+* Return:
+  * (Not finished)
+
+### `GET` /my/task
 * Params:
 * Return:
   * `tasks`: Array of `simple_task`
@@ -49,20 +49,23 @@ verify url from user's email-box (including CONFIRM mail and FORGET_PASS mail). 
       * `tags`
       * `projects` 
 
-### /my/profile
-* method: `GET` / `POST`
+### `GET` /my/profile (Not finished)
 * Params:
 * Return:
   * Not finished.
 
-### /my/project
-* method: `GET`
+### `POST` /my/profile (Not finished)
+* Params:
+  * Not finished.
+* Return:
+  * Not finished.
+
+### `GET` /my/project
 * Params:
 * Return:
   * Not finished.
 
-### /person/:id
-* method: `GET`
+### `GET` /person/:id
 * Params:
 * Return:
   * Not finished.
@@ -70,78 +73,109 @@ verify url from user's email-box (including CONFIRM mail and FORGET_PASS mail). 
 ## 
 ## Task / Project
 
-### /task
+### `POST` /task
 Post a new Task
-* Method: `POST`
 * Params:
   * Not finished.
 * Return:
+  * `simple_task` structure.
   * Not finished.
 
-### /task/:id
-`GET`: Get a task with detailed,
-`POST`: Modify the task
-* method: `GET` / `POST`
+### `GET` /task/:id (Not finished)
+Get a task with detailed info,
 * Params:
-  * same as POST /task .
 * Return:
   * same as POST /task .
 
-### /task/:id/assign
+### `GET` /task/:id
+Modify the task
+* Params:
+  * same as `POST` /task
+* Return:
+  * same as `POST` /task
+
+### `POST` /task/:id/assign
 assign the task to someone or parent task
-* method: `POST` / `DELETE`
 * Params:
   * `target`: target task's id or person's id
   * `type`: assign to target `task` or target `person`
   * `sort`: sort
 * Return:
-  * Not finished.
 
+### `DELETE` /task/:id/assign
+delete assign the task to someone or parent task
+* Params:
+  * `target`: target task's id
+  * `type`: assign to target `task` or target `person`
+* Return:
 
-### /task/:id/sub
-Get subtasks of the task
-* method: `GET`
+### `GET` /task/:id/tag
+Get tags of the task
+* Params:
+* Return:
+  * `tasks`: Array of `tag`
+
+### `POST` /task/:id/tag
+Get tags of the task
+* Params:
+  * `name`: tag name
+* Return:
+
+### `GET` /task/:id/sub
+Get sub tasks of the task
 * Params:
 * Return:
   * `tasks`: Array of `simple_task`
 
-### /task/:id/comment
-`GET`: Get comments of the task, `POST`: Post a new comment for the task.
-* method: `GET` / `POST`
+### `GET` /task/:id/parent
+Get parent tasks of the task
+* Params:
+* Return:
+  * `tasks`: Array of `simple_task`
+
+### `GET` /task/:id/comment
+Get comments of the task
 * Params:
   * Not finished.
 * Return:
   * Not finished.
 
-### /project/:id
+### `POST` /task/:id/comment
+Post a new comment for the task.
+* Params:
+  * `task_id`: target task's id
+  * `message`: comment message
+* Return:
+  * Not finished.
+
+### `GET` /project/:id (Not finished)
 Get project info
-* method: `GET`
 * Params:
 * Return:
   * Not finished.
 
-### /project/:id/task
+### `GET` /project/:id/task (Not finished)
 Get tasks of the project(or task)
-* method: `GET`
 * Params:
-  * Not finished.
 * Return:
   * `tasks`: Array of `simple_task`
 
 ## 
 ## Search
 
-### /search
-* method: `POST`
+### `POST` /search
 * Params:
-  * Not finished.
+  * `word` : key word you want to search
+  * `types`: Array of `type`, means which categorys you want to search
+  * `organization_id` : ONLY ONE organization_id should be pass to search
+  * (Not finished)
 * Return:
   * `tasks`: Array of `simple_task`
+  * `tags`: Array of `tag` (Not finished)
 
 ## Sample
-### /sample
-URI Summary here.
-* Method: `POST` or `GET` or else
+### `GET` or `POST` /path/to/sample
+URI Summary here. Method: `POST` or `GET` or else
 * Params:
   * `p1`
   * `p2` with some note here.

@@ -1,10 +1,11 @@
 var Then = require('thenjs');
+var extend = require('../lib/extend');
+var Session = require('../lib/Session');
 var Router = require('../lib/Router');
 var Person = require('../lib/Person');
 var Task = require('../lib/Task');
 var History = require('../lib/History');
-var extend = require('../lib/extend');
-var Session = require('../lib/Session');
+var Tag = require('../lib/Tag');
 
 var router = module.exports = new Router();
 
@@ -54,13 +55,14 @@ router.post(/^\/((\d+)\/?)?$/, function(req, res) {
 	});
 });
 
-router.post(/^\/(\d+)\/assign\/?$/, function(req, res) {
+router.all(/^\/(\d+)\/assign\/?$/, function(req, res) {
 	var id = req.match[1];
 	var post;
 	var current_person;
 	var current_task;
 
 	Then(function(then) {
+		if (req.method != 'post' && req.method != 'delete') throw "only support `post` and `delete` method";
 		Session.get(req.cookie.session, then);
 	}).then(function(then, personId) {
 		Person.load(personId, then);
@@ -72,13 +74,16 @@ router.post(/^\/(\d+)\/assign\/?$/, function(req, res) {
 		req.getBody(then);
 	}).then(function(then, body) {
 		post = JSON.parse(body);
-		if (post.type == 'my') then();
-		else if (post.type == 'person') Person.load(post.target, then);
+		if (post.type == 'my') then(null, current_person);
+		else if (post.type == 'person' && req.method == 'delete') then(null, current_person);
+		else if (post.type == 'person' && req.method == 'post') Person.load(post.target, then);
 		else if (post.type == 'task') Task.load(post.target, then);
 	}).then(function(then, target) {
-		if (post.type == 'my') current_task.assignToPerson(current_person, post.sort, then);
-		else if (post.type == 'person') current_task.assignToPerson(target, post.sort, then);
-		else if (post.type == 'task') current_task.assignToTask(target, post.sort, then);
+		var options = {};
+		if (req.method == 'delete') options = { del: true };
+		var sort = post.sort || 1;
+		if (post.type == 'person') current_task.assignToPerson(target, sort, options, then);
+		else if (post.type == 'task') current_task.assignToTask(target, sort, options, then);
 	}).then(function(then) {
 		res.json({});
 		then();
@@ -90,7 +95,43 @@ router.post(/^\/(\d+)\/assign\/?$/, function(req, res) {
 	});
 });
 
-router.delete(/^\/(\d+)\/assign\/?$/, function(req, res) {
+router.get(/^\/(\d+)\/tag\/?$/, function(req, res) {
+	var id = req.match[1];
+	var post;
+	var current_person;
+	var current_task;
+
+	Then(function(then) {
+		Session.get(req.cookie.session, then);
+	}).then(function(then, personId) {
+		Person.load(personId, then);
+	}).then(function(then, person) {
+		current_person = person;
+		Task.load(id, then);
+	}).then(function(then, task) {
+		current_task = task;
+
+		Tag.find({
+			task_id: current_task.id,
+			status: Tag.STATUS.NORMAL,
+		}, then);
+
+	}).then(function(then, tags) {
+		var result = [];
+		tags.forEach(function(tag) {
+			result.push(tag.display());
+		});
+		res.json(result);
+		then();
+	}).catch(function(then, error) {
+		res.json({ error: error.toString(), stack: error.stack });
+		then();
+	}).finally(function() {
+		res.end();
+	});
+});
+
+router.post(/^\/(\d+)\/tag\/?$/, function(req, res) {
 	var id = req.match[1];
 	var post;
 	var current_person;
@@ -108,15 +149,28 @@ router.delete(/^\/(\d+)\/assign\/?$/, function(req, res) {
 		req.getBody(then);
 	}).then(function(then, body) {
 		post = JSON.parse(body);
-		if (post.type == 'my') then();
-		else if (post.type == 'person') Person.load(post.target, then);
-		else if (post.type == 'task') Task.load(post.target, then);
-	}).then(function(then, target) {
-		//TODO 
-		if (post.type == 'person') throw "not finish 'task assign to no one'";
-		else if (post.type == 'task') current_task.assignToTask(target, post.sort, { del : true}, then);
-	}).then(function(then) {
-		res.json({});
+		name = post.name;
+		if (!name) throw 'no tag name passed';
+
+		Tag.find({
+			task_id: current_task.id,
+			name: name,
+			status: Tag.STATUS.NORMAL,
+		}, then);
+	}).then(function(then, tags) {
+		if (tags.length) throw 'tag already exists';
+		
+		var tag = new Tag();
+		tag.task_id = current_task.id;
+		tag.organization_id = current_task.organization_id;
+		tag.status = Tag.STATUS.NORMAL;
+		tag.name = post.name;
+		tag.createtime = Math.floor(Date.now() / 1000);
+		tag.updatetime = Math.floor(Date.now() / 1000);
+		tag.save(then);
+
+	}).then(function(then, tag) {
+		res.json(history.display());
 		then();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString(), stack: error.stack });

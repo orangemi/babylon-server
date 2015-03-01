@@ -1,10 +1,9 @@
 var Then = require('thenjs');
-
-var Session = require('../session');
 var Router = require('../lib/Router');
 var Person = require('../lib/Person');
 var Task = require('../lib/Task');
-var History = require('../lib/History');
+var extend = require('../lib/extend');
+var Session = require('../lib/Session');
 
 var router = module.exports = new Router();
 

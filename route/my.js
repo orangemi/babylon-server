@@ -2,9 +2,8 @@ var Then = require('thenjs');
 var Router = require('../lib/Router');
 var Person = require('../lib/Person');
 var Task = require('../lib/Task');
-var extend = require('../lib/extend.js');
-
-var Session = require('../session');
+var extend = require('../lib/extend');
+var Session = require('../lib/Session');
 
 var router = module.exports = new Router();
 

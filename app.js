@@ -6,7 +6,7 @@ var Then = require('thenjs');
 
 var Router = require('./lib/Router');
 var Person = require('./lib/Person');
-var Session = require('./session');
+var Session = require('./lib/Session');
 
 var httpServer = new Http.Server();
 var router = new Router(httpServer);
@@ -75,11 +75,16 @@ router.get('/search', function(req, res) {
 
 	Then(function(then) {
 		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
+	}).catch(function(then, error) {
+		res.json({ error: error.toString(), stack: error.stack });
+		then();
+	}).finally(function() {
+		res.end();
+	});
 
 });
 
-router.use('/my', require('./routers/my'));
-router.use('/task', require('./routers/task'));
+router.use('/my', require('./route/my'));
+router.use('/task', require('./route/task'));
 
 httpServer.listen(3000);

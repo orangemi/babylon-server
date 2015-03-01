@@ -1,3 +1,2 @@
 node_modules
-server/configs/*.json
-server/configs/*.json
+configs/*.json

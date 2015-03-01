@@ -2,6 +2,7 @@ var Then = require('thenjs');
 var Router = require('../lib/Router');
 var Person = require('../lib/Person');
 var Task = require('../lib/Task');
+var History = require('../lib/History');
 var extend = require('../lib/extend');
 var Session = require('../lib/Session');
 
@@ -78,6 +79,42 @@ router.post(/^\/(\d+)\/assign\/?$/, function(req, res) {
 		if (post.type == 'my') current_task.assignToPerson(current_person, post.sort, then);
 		else if (post.type == 'person') current_task.assignToPerson(target, post.sort, then);
 		else if (post.type == 'task') current_task.assignToTask(target, post.sort, then);
+	}).then(function(then) {
+		res.json({});
+		then();
+	}).catch(function(then, error) {
+		res.json({ error: error.toString(), stack: error.stack });
+		then();
+	}).finally(function() {
+		res.end();
+	});
+});
+
+router.delete(/^\/(\d+)\/assign\/?$/, function(req, res) {
+	var id = req.match[1];
+	var post;
+	var current_person;
+	var current_task;
+
+	Then(function(then) {
+		Session.get(req.cookie.session, then);
+	}).then(function(then, personId) {
+		Person.load(personId, then);
+	}).then(function(then, person) {
+		current_person = person;
+		Task.load(id, then);
+	}).then(function(then, task) {
+		current_task = task;
+		req.getBody(then);
+	}).then(function(then, body) {
+		post = JSON.parse(body);
+		if (post.type == 'my') then();
+		else if (post.type == 'person') Person.load(post.target, then);
+		else if (post.type == 'task') Task.load(post.target, then);
+	}).then(function(then, target) {
+		//TODO 
+		if (post.type == 'person') throw "not finish 'task assign to no one'";
+		else if (post.type == 'task') current_task.assignToTask(target, post.sort, { del : true}, then);
 	}).then(function(then) {
 		res.json({});
 		then();
@@ -170,6 +207,32 @@ router.post(/^\/(\d+)\/comment\/?$/, function(req, res) {
 	});
 });
 
+router.get(/^\/(\d+)\/parent\/?$/, function(req, res) {
+	var id = req.match[1];
+
+	Then(function(then) {
+		Session.get(req.cookie.session, then);
+	}).then(function(then, personId) {
+		Task.load(id, then);
+	}).then(function(then, task) {
+		Task.findByTask(task, { type: 'parent' }, then);
+	}).then(function(then, tasks) {
+		var result = [];
+		tasks.forEach(function(task, i) {
+			var t = task.display();
+			t.sort = i + 1;
+			result.push(t);
+		});
+		res.json(result);
+		then();
+	}).catch(function(then, error) {
+		res.json({ error: error.toString(), stack: error.stack });
+		then();
+	}).finally(function() {
+		res.end();
+	});
+});
+
 router.get(/^\/(\d+)\/sub\/?$/, function(req, res) {
 	var id = req.match[1];
 
@@ -178,7 +241,7 @@ router.get(/^\/(\d+)\/sub\/?$/, function(req, res) {
 	}).then(function(then, personId) {
 		Task.load(id, then);
 	}).then(function(then, task) {
-		Task.findByTask(task, then);
+		Task.findByTask(task, { type: 'sub' }, then);
 	}).then(function(then, tasks) {
 		var result = [];
 		tasks.forEach(function(task, i) {

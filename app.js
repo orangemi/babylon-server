@@ -6,6 +6,7 @@ var Then = require('thenjs');
 
 var Router = require('./lib/Router');
 var Person = require('./lib/Person');
+var Task = require('./lib/Task');
 var Session = require('./lib/Session');
 
 var httpServer = new Http.Server();
@@ -75,6 +76,28 @@ router.get('/search', function(req, res) {
 
 	Then(function(then) {
 		Session.get(req.cookie.session, then);
+	}).then(function(then, personId) {
+		Person.load(personId, then);
+	}).then(function(then, person) {
+		current_person = person;
+		req.getBody(then);
+	}).then(function(then, body) {
+		post = body ? JSON.parse(body) : {};
+		var types = post.types || [];
+		var word = post.word || '';
+		Then.parallel([
+			function(then) {
+				if (types.indexOf('task') == -1) then(null, []);
+				Task.find({
+					status : Task.STATUS.NORMAL,
+					organization_id : post.organization_id,
+					'title LIKE' : ['%', post.word, '%'].join(''),
+					//TODO may be need to add description search...
+				}, then);
+			},
+			// function(then) {}, //TODO add find tag
+			// function(then) {}, //TODO add find comment (very late)
+		]).then(then);
 	}).catch(function(then, error) {
 		res.json({ error: error.toString(), stack: error.stack });
 		then();

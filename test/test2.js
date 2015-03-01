@@ -1,27 +1,14 @@
-var Http = require('http');
-var Url = require('url');
-var Router = require('../lib/Router');
-var httpServer = new Http.Server();
+var Then = require('thenjs');
 
-var router = new Router(httpServer);
-
-router.get('/', function(req, res) {
-	res.write('ok');
-	res.end();
+Then.parallel([
+	function(then) {
+		console.log('first');
+		then(null, 1);
+	},
+	function(then) {
+		console.log('second but do nothing');
+		then(null, 20);
+	},
+]).then(function(then, result) {
+	console.log('last', result);
 });
-
-router.get('/login', function(req, res) {
-	var cookie = Router.getCookie(req); //.headers.cookie;
-
-	res.setHeader("Set-Cookie", ["type=ninja", "language=javascript"]);
-	res.end();
-});
-
-router.get('/person', function(req, res) {
-	res.write('ok');
-	res.end();
-});
-
-
-
-httpServer.listen(3000);

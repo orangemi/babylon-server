@@ -3,15 +3,21 @@ var Then = require('thenjs');
 var Person = require('../lib/Person');
 var Task = require('../lib/Task');
 
-Task.load(17, function(err, task) {
-	// console.log('load', err, task);
-	task.title = "g";
-	task.save(function(err, task) {
-		console.log('save', err, task);
-		// console.log(err);
-		// console.log(task);
-	});
+Task.find({
+	'title!LIKE' : '%Sample%',
+}, function(err, result) {
+	console.log(result);
 });
+
+// Task.load(17, function(err, task) {
+// 	// console.log('load', err, task);
+// 	task.title = "g";
+// 	task.save(function(err, task) {
+// 		console.log('save', err, task);
+// 		// console.log(err);
+// 		// console.log(task);
+// 	});
+// });
 
 
 // var t

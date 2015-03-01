@@ -31,6 +31,8 @@
 .task-line .assignee { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; margin: 0 10px; }
 .task-line .title { border: none; display: inline-block; outline: none; font-size: 16px; margin: 0 5px; }
 .task-line .complete { margin: -3px 5px 0 10px; font-size: 20px; }
+.task-line .go-detail { display: none; height: 25px; padding: 2px 12px; }
+.task-line:hover .go-detail { display: block; }
 
 .task-detail { }
 .task-detail .panel { padding: 8px 6px; border-bottom: solid 1px #ccc; font-size: 14px; display: flex; }
@@ -45,16 +47,22 @@
 .task-detail .tag-panel { }
 .task-detail .tag-panel .tag-list { display: inline-flex; }
 
-.task-detail .comment-panel { display: block; }
-.comment-panel .comment-head { width: 30px; }
+.project-panel { border-bottom: solid 1px #ccc; }
+.project-list .panel { border-bottom: none; }
+.project-line .remove { display: none; height: 20px; padding: 0 12px; }
+.project-line:hover .remove { display: block; }
+
+/*.task-detail .comment-panel { display: block; }*/
+/*.comment-panel .comment-head { width: 30px; }*/
 .comment-panel .comment-post { }
 .comment-panel .comment-input { display: block; width: 100%; }
 .comment-panel .comment-btn { }
 
 .task-detail .comment-list { margin-top: 5px; }
-.comment-line .comment-content { }
-.comment-line>.flex>.icon { width: 30px; font-size: 14px; text-align: center; }
-.comment-line .post-user-img { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; vertical-align: middle; }
+.comment-line { padding: 8px 0px; }
+.comment-line .panel { border-bottom: none; padding: 0 6px; }
+.comment-line .post-user-img { display: inline-block; width: 18px; height: 18px; background-color: #fff; background-image: url(../imgs/profile.jpg); background-size: 100%; }
+.comment-line .post-time { font-size: 12px; color: #999; }
 .comment-line .post-content { min-height: 20px; margin: 0; }
 
 .tag-input { }
@@ -94,11 +102,12 @@
 .icon-option-v:before { content: "\e518"; }
 .icon-uncheck:before { content: "\e154"; }
 .icon-check:before { content: "\e153"; }
-.icon-project:before { content: "\e072"; }
+.icon-task:before { content: "\e072"; }
 .icon-tags:before { content: "\e067"; }
 .icon-right:before { content: "\e224"; }
 .icon-warning:before { content: "\e079"; }
 .icon-chat:before { content: "\e246"; }
+.icon-project:before { content: "\e030"; }
 
 /* basic items */
 .input {

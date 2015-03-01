@@ -1,6 +1,6 @@
 define([
-'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'models/Task', 'models/CommentCollection', 'models/Utils'],
-function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, Task, CommentCollection, Utils) {
+'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/ProjectCollection', 'models/Utils'],
+function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, ProjectCollection, Utils) {
 	var View = Marionette.Layout.extend({
 		className : 'task-detail',
 		template : _.template(Html),
@@ -17,8 +17,10 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			this.listenTo(this.model, 'change', this.onChange);
 			this.listenTo(this.model, 'remove', this.onRemove);
 
-			this.commentsCollection = new CommentCollection();
-			this.listenTo(this.commentsCollection, 'add', this.onAddComment);
+			this.commentCollection = new CommentCollection();
+			this.listenTo(this.commentCollection, 'add', this.onAddComment);
+			this.projectCollection = new ProjectCollection();
+			this.listenTo(this.projectCollection, 'add', this.onAddProject);
 		},
 
 		onRemove :function() {
@@ -39,7 +41,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			};
 
 			Utils.post(uri, post, function(res) {
-				self.commentsCollection.add(res);
+				self.commentCollection.add(res);
 			});
 		},
 
@@ -55,8 +57,14 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 
 		onAddComment : function(comment) {
 			var $el = this.$el;
-			var view = new CommentLineView({ model : comment });
+			var view = new CommentLineView({ model: comment });
 			view.render().$el.prependTo($el.find('.comment-list'));
+		},
+
+		onAddProject : function(project) {
+			var $el = this.$el;
+			var view = new ProjectLineView({ model: project });
+			view.render().$el.appendTo($el.find('.project-list'));
 		},
 
 		onRender : function() {
@@ -64,20 +72,33 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			this.getSubTasks();
 			this.getTags();
 			this.getComments();
+			this.getProjects();
 		},
 
 		getTags : function() {
 			var $el = this.$el;
-			
+
 			//TEST: add sample tags
 			for (var i = 0; i < 2; i++) {
 				var tag = new TagLineView();
-				tag.render().$el.insertBefore($el.find('.tag-panel .tag-input'));				
+				tag.render().$el.insertBefore($el.find('.tag-panel .tag-input'));
 			}
 		},
 
+		getProjects : function() {
+			this.projectCollection.fetch(this.model.get('id'));
+			// var $el = this.$el;
+
+			// //TEST: add sample tags
+			// for (var i = 0; i < 2; i++) {
+			// 	var projectLine = new ProjectLineView();
+			// 	projectLine.render().$el.appendTo($el.find('.project-list'));
+			// }
+
+		},
+
 		getComments : function() {
-			this.commentsCollection.fetch(this.model.get('id'));
+			this.commentCollection.fetch(this.model.get('id'));
 		},
 
 		getSubTasks : function() {
@@ -90,5 +111,3 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 
 	return View;
 });
-
-	

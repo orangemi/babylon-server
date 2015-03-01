@@ -62,7 +62,7 @@ router.all(/^\/(\d+)\/assign\/?$/, function(req, res) {
 	var current_task;
 
 	Then(function(then) {
-		if (req.method != 'post' && req.method != 'delete') throw "only support `post` and `delete` method";
+		if (req.method.toLowerCase() != 'post' && req.method.toLowerCase() != 'delete') throw "only support `post` and `delete` method";
 		Session.get(req.cookie.session, then);
 	}).then(function(then, personId) {
 		Person.load(personId, then);
@@ -75,12 +75,12 @@ router.all(/^\/(\d+)\/assign\/?$/, function(req, res) {
 	}).then(function(then, body) {
 		post = JSON.parse(body);
 		if (post.type == 'my') then(null, current_person);
-		else if (post.type == 'person' && req.method == 'delete') then(null, current_person);
-		else if (post.type == 'person' && req.method == 'post') Person.load(post.target, then);
+		else if (post.type == 'person' && req.method.toLowerCase() == 'delete') then(null, current_person);
+		else if (post.type == 'person' && req.method.toLowerCase() == 'post') Person.load(post.target, then);
 		else if (post.type == 'task') Task.load(post.target, then);
 	}).then(function(then, target) {
 		var options = {};
-		if (req.method == 'delete') options = { del: true };
+		if (req.method.toLowerCase() == 'delete') options = { del: true };
 		var sort = post.sort || 1;
 		if (post.type == 'person') current_task.assignToPerson(target, sort, options, then);
 		else if (post.type == 'task') current_task.assignToTask(target, sort, options, then);

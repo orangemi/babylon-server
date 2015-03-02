@@ -1,6 +1,6 @@
 define([
-'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/ProjectCollection', 'models/Utils'],
-function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, ProjectCollection, Utils) {
+'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/Utils'],
+function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, TaskCollection, Utils) {
 	var View = Marionette.Layout.extend({
 		className : 'task-detail',
 		template : _.template(Html),
@@ -19,7 +19,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 
 			this.commentCollection = new CommentCollection();
 			this.listenTo(this.commentCollection, 'add', this.onAddComment);
-			this.projectCollection = new ProjectCollection();
+			this.projectCollection = new TaskCollection();
 			this.listenTo(this.projectCollection, 'add', this.onAddProject);
 		},
 
@@ -86,7 +86,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		getProjects : function() {
-			this.projectCollection.fetch(this.model.get('id'));
+			this.projectCollection.fetchParent('parent' ,this.model.get('id'));
 			// var $el = this.$el;
 
 			// //TEST: add sample tags

@@ -21,16 +21,30 @@ function (Backbone, _, $, app, Utils, Task) {
 			switch (type) {
 				case 'my': return this.fetchMy(callback);	
 				case 'sub': return this.fetchSub(id, callback);	
+				case 'parent': return this.fetchParent(id, callback);	
 				case 'person': return this.fetchPerson(id, callback);
 			}
+		},
+
+		fetchParent : function(id, callback) {
+			var self = this;
+			var uri = ['task', id, 'parent'].join('/');
+			Utils.get(uri, {}, function(rep) {
+				// self.assignType = 'task';
+				// self.assignTo = id;
+				rep.forEach(function(task) {
+					self.add(task);
+				})
+				// self.add(rep);
+			});
 		},
 
 		fetchSub : function(id, callback) {
 			var self = this;
 			var uri = ['task', id, 'sub'].join('/');
 			Utils.get(uri, {}, function(rep) {
-				self.assignType = 'task';
-				self.assignTo = id;
+				// self.assignType = 'task';
+				// self.assignTo = id;
 				rep.forEach(function(task) {
 					self.add(task);
 				})
@@ -40,9 +54,10 @@ function (Backbone, _, $, app, Utils, Task) {
 
 		fetchMy : function(callback) {
 			var self = this;
-			Utils.get('my/task', {}, function(rep) {
-				self.assignType = 'my';
-				self.assignTo = 0;
+			var uri = ['my', 'task'].join('/');
+			Utils.get(uri, {}, function(rep) {
+				// self.assignType = 'my';
+				// self.assignTo = 0;
 				rep.forEach(function(task) {
 					self.add(task);
 				})

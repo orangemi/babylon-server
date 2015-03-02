@@ -108,6 +108,7 @@
 .icon-warning:before { content: "\e079"; }
 .icon-chat:before { content: "\e246"; }
 .icon-project:before { content: "\e030"; }
+.icon-plus:before { content: "+"; }
 
 /* basic items */
 .input {

@@ -3,10 +3,35 @@ var Then = require('thenjs');
 var Person = require('../lib/Person');
 var Task = require('../lib/Task');
 
-Task.find({
-	'title!LIKE' : '%Sample%',
-}, function(err, result) {
-	console.log(result);
+body = '{"types":["task"],"organization_id":null,"word":"aa"}';
+post = body ? JSON.parse(body) : {};
+var types = post.types || [];
+var word = post.word || '';
+
+Then(function(then) {
+	then(null, 'params');
+}).parallel([
+	function(then, params) {
+		console.log(1, arguments);
+		if (types.indexOf('task') == -1) then(null, []);
+		Task.find({
+			status : Task.STATUS.NORMAL,
+			//organization_id : post.organization_id,
+			'title LIKE' : ['%', post.word, '%'].join(''),
+			//TODO may be need to add description search...
+		}, then);
+	},
+	function(then, params) {
+		console.log(2, arguments);
+		then();
+//		throw "Some Error";
+	}, //TODO add find tag
+]).then(function(then, result) {
+	console.log('---- result ----');
+	// console.log(result);
+}).catch(function(then, error) {
+	console.log('---- error ----');
+	// console.error(error);
 });
 
 // Task.load(17, function(err, task) {

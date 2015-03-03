@@ -8,6 +8,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		events: {
 			'blur .title' : 'onTitleBlur',
 			'blur .description' : 'onDescriptionBlur',
+			'keyup .project-input' : 'onProjectInputKeyUp',
 			'click .comment-btn' : 'onCommentClick',
 		},
 
@@ -30,6 +31,17 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		onChange : function() {
 			this.$el.find('.title-panel .title').val(this.model.get('title'));
 			this.$el.find('.description-panel .description').html(this.model.get('description'));
+		},
+
+		onProjectInputKeyUp : function() {
+			var value = this.$el.find('.project-input').val();
+			var $list = this.$el.find('.project-popup-list');
+			new TaskCollection().search(value, {}, function(list) {
+				$list.empty().show();
+				list['task'].forEach(function(task) {
+					$("<li>").html(task.title).appendTo($list);
+				});
+			});
 		},
 
 		onCommentClick : function() {
@@ -86,7 +98,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		getProjects : function() {
-			this.projectCollection.fetchParent('parent' ,this.model.get('id'));
+			this.projectCollection.fetch('parent' ,this.model.get('id'));
 			// var $el = this.$el;
 
 			// //TEST: add sample tags

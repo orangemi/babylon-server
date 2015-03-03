@@ -69,7 +69,7 @@ router.get('/login', function(req, res) {
 	});
 });
 
-router.get('/search', function(req, res) {
+router.post('/search', function(req, res) {
 	var post;
 	var current_person;
 	var current_task;
@@ -83,21 +83,32 @@ router.get('/search', function(req, res) {
 		req.getBody(then);
 	}).then(function(then, body) {
 		post = body ? JSON.parse(body) : {};
-		var types = post.types || [];
-		var word = post.word || '';
-		Then.parallel([
-			function(then) {
-				if (types.indexOf('task') == -1) then(null, []);
-				Task.find({
-					status : Task.STATUS.NORMAL,
-					organization_id : post.organization_id,
-					'title LIKE' : ['%', post.word, '%'].join(''),
-					//TODO may be need to add description search...
-				}, then);
-			},
-			// function(then) {}, //TODO add find tag
-			// function(then) {}, //TODO add find comment (very late)
-		]).then(then);
+		then();
+	}).parallel([
+		function(then) {
+			if (post.types.indexOf('task') == -1) then(null, []);
+			Task.find({
+				status : Task.STATUS.NORMAL,
+				//organization_id : post.organization_id,
+				'title LIKE' : ['%', post.word, '%'].join(''),
+				//TODO may be need to add description search...
+			}, then);
+		},
+		// function(then) {}, //TODO add find tag
+		// function(then) {}, //TODO add find comment (very late)
+	]).then(function(then, list) {
+		var result = {};
+		var types = ['task'];
+		list.forEach(function(list, i) {
+			var type = types[i];
+			if (!type) return;
+			result[type] = [];
+			list.forEach(function(line) {
+				result[type].push(line.display());
+			});
+		});
+		res.json(result);
+		then();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString(), stack: error.stack });
 		then();

@@ -47,10 +47,14 @@
 .task-detail .tag-panel { }
 .task-detail .tag-panel .tag-list { display: inline-flex; }
 
-.project-panel { border-bottom: solid 1px #ccc; }
+.project-panel { border-bottom: solid 1px #ccc; position: relative; }
 .project-list .panel { border-bottom: none; }
 .project-line .remove { display: none; height: 20px; padding: 0 12px; }
 .project-line:hover .remove { display: block; }
+.project-popup-list { position: absolute; right: 36px; left: 36px; top: 26px; border-radius: 0; border: 0; display: none; background-color: #fff; }
+.project-popup-list li { border-bottom: solid 1px #ddd; padding: 5px 3px; }
+.project-popup-list li:hover { background-color: #eee; }
+
 
 /*.task-detail .comment-panel { display: block; }*/
 /*.comment-panel .comment-head { width: 30px; }*/

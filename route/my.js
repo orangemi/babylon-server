@@ -9,13 +9,13 @@ var router = module.exports = new Router();
 
 router.get('/', function(req, res) {
 	Then(function(then) {
-		var session = req.cookie.session;
-		var personId = Session.get(session);
-		if (!personId) throw new Error('Invalid session or expired!');
+		Session.get(req.cookie.session, then);
+	}).then(function(then, personId) {
 		Person.load(personId, then);
 	}).then(function(then, person) {
 		if (person.status != Person.STATUS.NORMAL) throw new Error('Invalid User');
-		res.write('this is my homepage #' + personId);
+		res.json(person.display());
+		//res.write('this is my homepage #' + personId);
 		then();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString() });

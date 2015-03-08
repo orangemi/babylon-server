@@ -86,7 +86,7 @@ router.post('/search', function(req, res) {
 		then();
 	}).parallel([
 		function(then) {
-			if (post.types.indexOf('task') == -1) then(null, []);
+			if (post.types.indexOf('task') == -1) return then(null, []);
 			Task.find({
 				status : Task.STATUS.NORMAL,
 				//organization_id : post.organization_id,
@@ -94,11 +94,20 @@ router.post('/search', function(req, res) {
 				//TODO may be need to add description search...
 			}, then);
 		},
+		function(then) {
+			if (post.types.indexOf('person') == -1) return then(null, []);
+			Person.find({
+				status : Person.STATUS.NORMAL,
+				//organization_id : post.organization_id,
+				'email LIKE' : ['%', post.word, '%'].join(''),
+				//TODO may be need to add nickname search...
+			}, then);
+		}, 
 		// function(then) {}, //TODO add find tag
 		// function(then) {}, //TODO add find comment (very late)
 	]).then(function(then, list) {
 		var result = {};
-		var types = ['task'];
+		var types = ['task', 'person'];
 		list.forEach(function(list, i) {
 			var type = types[i];
 			if (!type) return;

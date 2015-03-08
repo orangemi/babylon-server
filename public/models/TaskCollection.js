@@ -2,15 +2,13 @@ define(
 ['backbone', 'underscore', 'jquery', 'app/app', 'models/Utils', 'models/Task'],
 function (Backbone, _, $, app, Utils, Task) {
 
-	var emptyFn = function() {};
-
 	var Collection = Backbone.Collection.extend({
 		model : Task,
 		assignType : null,
 		assignTo : null,
 
 		search : function(word, options, callback) {
-			callback = typeof(callback) == 'function' ? callback : emptyFn;
+			callback = typeof(callback) == 'function' ? callback : Utils.emptyFn;
 			var uri = ['search'].join('/');
 			var post = {
 				types: ['task'],
@@ -28,7 +26,7 @@ function (Backbone, _, $, app, Utils, Task) {
 				callback = id;
 			}
 
-			callback = typeof(callback) == 'function' ? callback : emptyFn;
+			callback = typeof(callback) == 'function' ? callback : Utils.emptyFn;
 			this.remove(this.models);
 
 			switch (type) {
@@ -47,7 +45,7 @@ function (Backbone, _, $, app, Utils, Task) {
 				// self.assignTo = id;
 				rep.forEach(function(task) {
 					self.add(task);
-				})
+				});
 				// self.add(rep);
 			});
 		},
@@ -56,11 +54,11 @@ function (Backbone, _, $, app, Utils, Task) {
 			var self = this;
 			var uri = ['task', id, 'sub'].join('/');
 			Utils.get(uri, {}, function(rep) {
-				// self.assignType = 'task';
-				// self.assignTo = id;
+				self.assignType = 'task';
+				self.assignTo = id;
 				rep.forEach(function(task) {
 					self.add(task);
-				})
+				});
 				// self.add(rep);
 			});
 		},
@@ -69,11 +67,11 @@ function (Backbone, _, $, app, Utils, Task) {
 			var self = this;
 			var uri = ['my', 'task'].join('/');
 			Utils.get(uri, {}, function(rep) {
-				// self.assignType = 'my';
-				// self.assignTo = 0;
+				self.assignType = 'my';
+				self.assignTo = 0;
 				rep.forEach(function(task) {
 					self.add(task);
-				})
+				});
 				// self.add(rep);
 			});
 		},

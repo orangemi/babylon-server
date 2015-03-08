@@ -25,9 +25,6 @@ function (Marionette, _, app, Html, Task) {
 		className : 'comment-line',
 		template : _.template(Html),
 
-		assignType: null,
-		assignTo: null,
-
 		events : {
 		},
 

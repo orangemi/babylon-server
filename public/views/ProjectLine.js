@@ -6,9 +6,6 @@ function (Marionette, _, app, Html, Task) {
 		className : 'project-line panel',
 		template : _.template(Html),
 
-		assignType: null,
-		assignTo: null,
-
 		events : {
 			'click .remove'	: 'onRemoveClick',
 			'click .name'	: 'onNameClick',
@@ -17,10 +14,15 @@ function (Marionette, _, app, Html, Task) {
 		initialize : function(options) {
 			this.model = options.model || new Backbone.Model();
 			this.listenTo(this.model, 'change', this.onChange);
+			this.listenTo(this.model, 'remove', this.onRemove);
 		},
 
 		onChange : function() {
 			this.onRender();
+		},
+
+		onRemove : function() {
+			this.remove();
 		},
 
 		onRender : function() {
@@ -33,6 +35,8 @@ function (Marionette, _, app, Html, Task) {
 		},
 
 		onRemoveClick : function() {
+			this.trigger('removeTask', this.model);
+			// this.remove();
 		},
 	});
 

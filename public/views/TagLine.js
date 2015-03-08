@@ -6,9 +6,6 @@ function (Marionette, _, app, Html, Task) {
 		className : 'tag-line',
 		template : _.template(Html),
 
-		assignType: null,
-		assignTo: null,
-
 		events : {
 			'click .remove'	: 'onRemoveClick',
 		},

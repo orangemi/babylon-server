@@ -1,6 +1,6 @@
 define([
-'marionette', 'underscore', 'app/app', 'text!html/Home.html', 'views/Menu', 'views/TaskList', 'models/Task'],
-function (Marionette, _, app, Html, MenuView, TaskList, TaskModel) {
+'marionette', 'underscore', 'app/app', 'text!html/Home.html', 'views/Menu', 'views/TaskList', 'models/Task', 'models/Person'],
+function (Marionette, _, app, Html, MenuView, TaskList, TaskModel, Person) {
 	var HomeView = Marionette.Layout.extend({
 		id : 'home',
 		className : 'flex home',
@@ -21,11 +21,12 @@ function (Marionette, _, app, Html, MenuView, TaskList, TaskModel) {
 
 		initialize : function() {
 			var taskList = this.taskList = new TaskList();
+			var me = app.me = new Person();
+			me.fetchMe();
 		},
 
 		onRender : function() {
 			this.taskList.render().$el.appendTo(this.$el.find('.content .list .tasks'));
-
 			//TODO add a sample
 			// this.taskList.collection.add({});
 

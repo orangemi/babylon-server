@@ -30,18 +30,27 @@ function (Backbone, _, $, app, Utils) {
 
 		},
 
-		assignTo : function(type, target, next) {
+		assignTo : function(type, target, options, next) {
+			if (typeof(options) == 'function') {
+				next = options;
+				options = {};
+			}
+			options = options || {};
 			var self = this;
 			if (!this.get('id')) throw 'Task can not be assign without id.';
 			var uri = ['task', this.id, 'assign'].join('/');
 			var post = {
 				target: target,
 				type: type,
-				sort: this.get('sort'),
+				sort: options.sort || this.get('sort'),
 			};
-			Utils.post(uri, post, function() {
+
+			var method = !options.del ? Utils.post : Utils.del;
+
+			method(uri, post, function() {
 				if (typeof(next) == 'function') next(self);
 				self.trigger('assigned', self, type, target);
+				app.trigger('assigned', self, type, target);
 			});
 		},
 

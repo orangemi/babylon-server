@@ -1,6 +1,6 @@
 define([
-'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/Utils'],
-function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, TaskCollection, Utils) {
+'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/PersonCollection', 'models/Utils'],
+function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, TaskCollection, PersonCollection, Utils) {
 	var View = Marionette.Layout.extend({
 		className : 'task-detail',
 		template : _.template(Html),
@@ -10,10 +10,12 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			'blur .description' : 'onDescriptionBlur',
 			'keyup .project-input' : 'onProjectInputKeyUp',
 			'click .comment-btn' : 'onCommentClick',
+			'click .assignee' : 'onAssigneeClick',
+			'keyup .assignee-input' : 'onAssigneeInputKeyUp',
 		},
 
 		initialize: function(options) {
-			options || options || {};
+			options = options || {};
 			this.model = options.model || new Task();
 			this.listenTo(this.model, 'change', this.onChange);
 			this.listenTo(this.model, 'remove', this.onRemove);
@@ -25,7 +27,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		onRemove :function() {
-			this.remove();
+			// this.remove();
 		},
 
 		onChange : function() {
@@ -33,13 +35,46 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			this.$el.find('.description-panel .description').html(this.model.get('description'));
 		},
 
+		onAssigneeClick : function() {
+			this.$el.find('.assignee-search').removeClass('hide');
+		},
+
+		onAssigneeInputKeyUp : function() {
+			var self = this;
+			var $search = this.$el.find('.assignee-search');
+			var $input = this.$el.find('.assignee-input');
+			var value = $input.val();
+			var $list = this.$el.find('.person-popup-list');
+			new PersonCollection().search(value, {}, function(list) {
+				$list.empty().show();
+				list.person.forEach(function(person) {
+					var $li = $("<li>").html(person.email).appendTo($list);
+					$li.click(function() {
+						self.model.assignTo('person', person.id, { sort: 1 });
+						//self.addParentTask(new Task(person));
+						$list.hide();
+						$input.val('');
+						$search.addClass('hide');
+					});
+				});
+
+			});
+		},
+
 		onProjectInputKeyUp : function() {
-			var value = this.$el.find('.project-input').val();
+			var self = this;
+			var $input = this.$el.find('.project-input');
+			var value = $input.val();
 			var $list = this.$el.find('.project-popup-list');
 			new TaskCollection().search(value, {}, function(list) {
 				$list.empty().show();
-				list['task'].forEach(function(task) {
-					$("<li>").html(task.title).appendTo($list);
+				list.task.forEach(function(task) {
+					var $li = $("<li>").html(task.title).appendTo($list);
+					$li.click(function() {
+						self.addParentTask(new Task(task));
+						$list.hide();
+						$input.val('');
+					});
 				});
 			});
 		},
@@ -77,6 +112,14 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			var $el = this.$el;
 			var view = new ProjectLineView({ model: project });
 			view.render().$el.appendTo($el.find('.project-list'));
+			this.listenTo(view, 'removeTask', this.onRemoveParentTask);
+		},
+
+		onRemoveParentTask : function(task) {
+			var self = this;
+			this.model.assignTo('task', task.get('id'), { del: true }, function() {
+				self.projectCollection.remove(task);
+			});
 		},
 
 		onRender : function() {
@@ -85,6 +128,13 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			this.getTags();
 			this.getComments();
 			this.getProjects();
+		},
+
+		addParentTask : function(task) {
+			var self = this;
+			this.model.assignTo('task', task.get('id'), function(rep) {
+				self.projectCollection.add(task);
+			});
 		},
 
 		getTags : function() {

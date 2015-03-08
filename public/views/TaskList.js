@@ -15,10 +15,26 @@ function (Marionette, _, app, Html, TaskLineView, TaskCollection, Task) {
 			var collection = this.collection = options.collection || new TaskCollection();
 			this.listenTo(collection, 'add', this.onAddTask);
 			this.listenTo(collection, 'remove', this.onRemoveTask);
+			this.listenTo(app, 'assigned', this.onAssignedTask);
 		},
 
 		onRender : function() {
 
+		},
+
+		onAssignedTask : function(task, assignType, assignTo) {
+			var localAssignType = this.collection.assignType;
+			var localAssignTo = this.collection.assignTo;
+			if (this.collection.assignType == 'my') {
+				 localAssignType = 'person';
+				 localAssignTo = app.me.get('id');
+			}
+			if (localAssignType != assignType) return;
+			if (localAssignTo == assignTo) {
+				this.collection.add(task);
+			} else {
+				this.collection.remove(task);
+			}
 		},
 
 		onAddClick : function() {
@@ -43,7 +59,7 @@ function (Marionette, _, app, Html, TaskLineView, TaskCollection, Task) {
 
 		onRemoveTask : function(task, collection, options) {
 			options = options || {};
-			collection.rest(sort).forEach(function(model) {
+			collection.rest(options.index).forEach(function(model) {
 				model.set('sort', model.get('sort') - 1);
 			});
 
@@ -70,10 +86,6 @@ function (Marionette, _, app, Html, TaskLineView, TaskCollection, Task) {
 			if (options.focus) {
 				taskLine.focus();
 			}
-		},
-
-		onRemoveTask : function(task, options) {
-
 		},
 
 		onTaskSaved : function(task) {

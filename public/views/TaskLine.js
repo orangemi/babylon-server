@@ -19,8 +19,8 @@ function (Marionette, _, app, Html, Task) {
 			options = options || {};
 			this.model = options.model || new Task();
 			
-			this.assignType = options.assignType;
-			this.assignTo = options.assignTo;
+			this.assignType = this.model.assignType || options.assignType;
+			this.assignTo = this.model.assignTo || options.assignTo;
 
 			this.listenTo(this.model, 'remove', this.remove);
 			this.listenTo(this.model, 'change', this.onChange);

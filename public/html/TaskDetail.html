@@ -1,11 +1,15 @@
-<div class="panel">
+<div class="assignee-panel panel">
 	<div class="assignee">Me</div>
+	<div class="assignee-search hide">
+		<div><input class="assignee-input" placeHolder="email..." /></div>
+		<ul class="person-popup-list"></ul>
+	</div>
 	<div class="panel-value schedule_time"></div>
 </div>
 <div class="project-panel">
 	<div class="project-search panel">
 		<span class="icon icon-plus"></span>
-		<input class="project-input panel-value" />
+		<input class="project-input panel-value" placeHolder="project..." />
 		<span class="icon icon-search"></span>
 		<ul class="project-popup-list"></ul>
 		<!-- <button class="btn btn-normal"><span class="icon icon-search"></span></button> -->
@@ -26,7 +30,7 @@
 </div>
 <div class="panel description-panel">
 	<span class="icon"></span>
-	<textarea class="panel-value description"></textarea>
+	<textarea class="panel-value description" placeHolder="no description..."></textarea>
 </div>
 <div class="sub-tasks-panel"></div>
 <div class="comment-panel">

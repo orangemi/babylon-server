@@ -47,6 +47,12 @@
 .task-detail .tag-panel { }
 .task-detail .tag-panel .tag-list { display: inline-flex; }
 
+.assignee-panel { position: relative; }
+.assignee-search { position: absolute; background: #fff; top: 0; left: 0; z-index: 2; }
+.person-popup-list { position: absolute; right: 0; left: 0; top: 100%; border-radius: 0; border: 0; display: none; background-color: #fff; }
+.person-popup-list li { border-bottom: solid 1px #ddd; padding: 5px 3px; }
+.person-popup-list li:hover { background-color: #eee; }
+
 .project-panel { border-bottom: solid 1px #ccc; position: relative; }
 .project-list .panel { border-bottom: none; }
 .project-line .remove { display: none; height: 20px; padding: 0 12px; }

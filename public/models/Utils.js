@@ -1,20 +1,24 @@
 define(
 ['backbone', 'underscore', 'jquery', 'app/app'],
 function (Backbone, _, $, app) {
-	var emptyFn = function() {};
 	var utils = {};
+	var emptyFn = utils.emptyFn =  function() {};
 	var get = utils.get = function(path ,data, callback) {
-		ajax('GET', path, data, callback);
+		return ajax('GET', path, data, callback);
 	};
 
 	var post = utils.post = function(path, data, callback) {
-		ajax('POST', path, data, callback);
+		return ajax('POST', path, data, callback);
+	};
+
+	var del = utils.del = function(path, data, callback) {
+		return ajax('DELETE', path, data, callback);
 	};
 
 	var ajax = utils.ajax = function(method, path, data, callback) {
 		callback = typeof(callback) == 'function' ? callback : emptyFn;
 		method = method || 'GET';
-		$.ajax({
+		return $.ajax({
 			url : path,
 			// url : app.data.requestUrl + path,
 			type : method,

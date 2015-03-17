@@ -12,6 +12,10 @@ var Session = require('./lib/Session');
 var httpServer = new Http.Server();
 var router = new Router(httpServer);
 
+router.use('*', function(req, res) {
+	console.log(req.method, req.url);
+});
+
 router.get('/', function(req, res) {
 	req.pathname = '/index.html';
 	router.process(req, res);
@@ -129,5 +133,6 @@ router.post('/search', function(req, res) {
 
 router.use('/my', require('./route/my'));
 router.use('/task', require('./route/task'));
+router.use('/person', require('./route/person'));
 
 httpServer.listen(3000);

@@ -1,14 +1,6 @@
-var Then = require('thenjs');
-
-Then.parallel([
-	function(then) {
-		console.log('first');
-		then(null, 1);
-	},
-	function(then) {
-		console.log('second but do nothing');
-		then(null, 20);
-	},
-]).then(function(then, result) {
-	console.log('last', result);
-});
+var p2r = require('path-to-regexp');
+var path = '';
+var regex = p2r(path, {end: false});
+var result = regex.exec('/abc/123/456');
+//path = result.shift();
+console.log(regex.keys);

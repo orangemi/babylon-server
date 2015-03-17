@@ -7,23 +7,44 @@ var Session = require('../lib/Session');
 
 var router = module.exports = new Router();
 
-router.get('/', function(req, res) {
+router.use('/:anything*', function(req, res, next) {
 	Then(function(then) {
 		Session.get(req.cookie.session, then);
 	}).then(function(then, personId) {
 		Person.load(personId, then);
 	}).then(function(then, person) {
-		if (person.status != Person.STATUS.NORMAL) throw new Error('Invalid User');
-		res.json(person.display());
-		//res.write('this is my homepage #' + personId);
+		req.person = person;
 		then();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString() });
-		then();
-	}).finally(function() {
 		res.end();
+	}).finally(function() {
+		next();
 	});
+}, { wait: true });
+
+router.get('/', function(req, res) {
+	res.json(req.person.display());
+	res.end();
 });
+
+// router.get('/', function(req, res) {
+// 	Then(function(then) {
+// 		Session.get(req.cookie.session, then);
+// 	}).then(function(then, personId) {
+// 		Person.load(personId, then);
+// 	}).then(function(then, person) {
+// 		if (person.status != Person.STATUS.NORMAL) throw new Error('Invalid User');
+// 		res.json(person.display());
+// 		//res.write('this is my homepage #' + personId);
+// 		then();
+// 	}).catch(function(then, error) {
+// 		res.json({ error: error.toString() });
+// 		then();
+// 	}).finally(function() {
+// 		res.end();
+// 	});
+// });
 
 router.get('/task', function(req, res) {
 	Then(function(then) {

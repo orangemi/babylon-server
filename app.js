@@ -12,7 +12,7 @@ var Session = require('./lib/Session');
 var httpServer = new Http.Server();
 var router = new Router(httpServer);
 
-router.use('*', function(req, res) {
+router.use('/:anything*', function(req, res) {
 	console.log(req.method, req.url);
 });
 

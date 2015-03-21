@@ -26,7 +26,7 @@ function (Marionette, _, app, Html, TaskLineView, TaskCollection, Task) {
 			var localAssignType = this.collection.assignType;
 			var localAssignTo = this.collection.assignTo;
 			if (this.collection.assignType == 'my') {
-				 localAssignType = 'person';
+				 localAssignType = 'user';
 				 localAssignTo = app.me.get('id');
 			}
 			if (localAssignType != assignType) return;

@@ -2,35 +2,69 @@ var Then = require('thenjs');
 var extend = require('../lib/extend');
 var Session = require('../lib/Session');
 var Router = require('../lib/Router');
-var Person = require('../lib/Person');
+var User = require('../lib/User');
 var Task = require('../lib/Task');
 var History = require('../lib/History');
 var Tag = require('../lib/Tag');
 
 var router = module.exports = new Router();
 
-router.post(/^\/((\d+)\/?)?$/, function(req, res) {
-	var current_task;
-	var current_person;
+router.get('/', function(req, res) {
+	Then(function(then) {
+		var organization_id = req.organization.id;
+		//var organization_id = req.params.organization_id;
+		var parentTask = new Task();
+		parentTask.id = 0;
+		parentTask.organization_id = organization_id;
+		Task.findByTask(parentTask, { type: 'sub' }, then);
+	}).then(function(then, tasks) {
+		var result = [];
+		tasks.forEach(function(task, i) {
+			var t = task.display();
+			t.sort = i + 1;
+			result.push(t);
+		});
+		res.json(result);
+		then();
+	}).catch(function(then, error) {
+		res.json({ error: error.toString(), stack: error.stack });
+		then();
+	}).finally(function() {
+		res.end();
+	});
+});
+
+router.use(/^\/(\d+)/, function(req, res, next) {
+	req.params.task_id = req.matchedResult[1];
+	Then(function(then) {
+		Task.load(req.params.task_id, then);
+	}).then(function(then, task) {
+		if (task.organization_id != req.organization.id) throw 'organization error';
+		req.task = task;
+		then();		
+	}).catch(function(then, error) {
+		res.json({ error: error.toString(), stack: error.stack });
+		res.end();
+	}).finally(function() {
+		next();
+	});
+}, { wait: true });
+
+router.post(/^\/((\w+)\/?)?$/, function(req, res) {
 	var id = req.match[2];
 	var post;
 
 	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		current_person = person;
-		if (id) Task.load(id, then);
-		else then(null, new Task());
-	}).then(function(then, task) {
-		current_task = task;
+		if (!id) {
+			var task = req.task = new Task();
+			task.organization_id = req.organization.id;
+			task.creator = req.user.id;
+		}
 		req.getBody(then);
 	}).then(function(then, body) {
 		post = JSON.parse(body);
 
-		var task = current_task;
-		task.creator = post.creator || task.creator || current_person.id;
+		var task = req.task;
 		task.title = post.title || task.title || '';
 		task.description = post.description || task.description || '';
 		task.status = post.status || task.status || Task.STATUS.NORMAL;
@@ -55,35 +89,24 @@ router.post(/^\/((\d+)\/?)?$/, function(req, res) {
 	});
 });
 
-router.all(/^\/(\d+)\/assign\/?$/, function(req, res) {
-	var id = req.match[1];
+router.all('/:task_id/assign', function(req, res) {
 	var post;
-	var current_person;
-	var current_task;
 
 	Then(function(then) {
 		if (req.method.toLowerCase() != 'post' && req.method.toLowerCase() != 'delete') throw "only support `post` and `delete` method";
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		current_person = person;
-		Task.load(id, then);
-	}).then(function(then, task) {
-		current_task = task;
 		req.getBody(then);
 	}).then(function(then, body) {
 		post = JSON.parse(body);
-		if (post.type == 'my') then(null, current_person);
-		else if (post.type == 'person' && req.method.toLowerCase() == 'delete') then(null, current_person);
-		else if (post.type == 'person' && req.method.toLowerCase() == 'post') Person.load(post.target, then);
+		if (post.type == 'my') then(null, req.user);
+		else if (post.type == 'user' && req.method.toLowerCase() == 'delete') then(null, req.user);
+		else if (post.type == 'user' && req.method.toLowerCase() == 'post') User.load(post.target, then);
 		else if (post.type == 'task') Task.load(post.target, then);
 	}).then(function(then, target) {
 		var options = {};
 		if (req.method.toLowerCase() == 'delete') options = { del: true };
 		var sort = post.sort || 1;
-		if (post.type == 'person') current_task.assignToPerson(target, sort, options, then);
-		else if (post.type == 'task') current_task.assignToTask(target, sort, options, then);
+		if (post.type == 'user') req.task.assignToUser(target, sort, options, then);
+		else if (post.type == 'task') req.task.assignToTask(target, sort, options, then);
 	}).then(function(then) {
 		res.json({});
 		then();
@@ -95,24 +118,10 @@ router.all(/^\/(\d+)\/assign\/?$/, function(req, res) {
 	});
 });
 
-router.get(/^\/(\d+)\/tag\/?$/, function(req, res) {
-	var id = req.match[1];
-	var post;
-	var current_person;
-	var current_task;
-
+router.get('/:task_id/tag', function(req, res) {
 	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		current_person = person;
-		Task.load(id, then);
-	}).then(function(then, task) {
-		current_task = task;
-
 		Tag.find({
-			task_id: current_task.id,
+			task_id: req.task.id,
 			status: Tag.STATUS.NORMAL,
 		}, then);
 
@@ -131,21 +140,10 @@ router.get(/^\/(\d+)\/tag\/?$/, function(req, res) {
 	});
 });
 
-router.post(/^\/(\d+)\/tag\/?$/, function(req, res) {
-	var id = req.match[1];
+router.post('/:task_id/tag', function(req, res) {
 	var post;
-	var current_person;
-	var current_task;
 
 	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		current_person = person;
-		Task.load(id, then);
-	}).then(function(then, task) {
-		current_task = task;
 		req.getBody(then);
 	}).then(function(then, body) {
 		post = JSON.parse(body);
@@ -153,7 +151,7 @@ router.post(/^\/(\d+)\/tag\/?$/, function(req, res) {
 		if (!name) throw 'no tag name passed';
 
 		Tag.find({
-			task_id: current_task.id,
+			task_id: req.task.id,
 			name: name,
 			status: Tag.STATUS.NORMAL,
 		}, then);
@@ -161,8 +159,8 @@ router.post(/^\/(\d+)\/tag\/?$/, function(req, res) {
 		if (tags.length) throw 'tag already exists';
 		
 		var tag = new Tag();
-		tag.task_id = current_task.id;
-		tag.organization_id = current_task.organization_id;
+		tag.task_id = req.task.id;
+		tag.organization_id = req.task.organization_id;
 		tag.status = Tag.STATUS.NORMAL;
 		tag.name = post.name;
 		tag.createtime = Math.floor(Date.now() / 1000);
@@ -170,7 +168,7 @@ router.post(/^\/(\d+)\/tag\/?$/, function(req, res) {
 		tag.save(then);
 
 	}).then(function(then, tag) {
-		res.json(history.display());
+		// res.json(history.display());
 		then();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString(), stack: error.stack });
@@ -180,24 +178,10 @@ router.post(/^\/(\d+)\/tag\/?$/, function(req, res) {
 	});
 });
 
-router.get(/^\/(\d+)\/comment\/?$/, function(req, res) {
-	var id = req.match[1];
-	var post;
-	var current_person;
-	var current_task;
-
+router.get('/:task_id/comment', function(req, res) {
 	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		current_person = person;
-		Task.load(id, then);
-	}).then(function(then, task) {
-		current_task = task;
-
 		History.find({
-			task_id: current_task.id,
+			task_id: req.task.id,
 			type: History.TYPE.COMMENT,
 			status: History.STATUS.NORMAL,
 		}, {
@@ -221,28 +205,18 @@ router.get(/^\/(\d+)\/comment\/?$/, function(req, res) {
 });
 
 
-router.post(/^\/(\d+)\/comment\/?$/, function(req, res) {
-	var id = req.match[1];
+router.post('/:task_id/comment', function(req, res) {
+	var id = req.params.task_id;
 	var post;
-	var current_person;
-	var current_task;
 
 	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		current_person = person;
-		Task.load(id, then);
-	}).then(function(then, task) {
-		current_task = task;
 		req.getBody(then);
 	}).then(function(then, body) {
 		post = JSON.parse(body);
 
 		var comment = new History();
-		comment.creator = current_person.id;
-		comment.task_id = current_task.id;
+		comment.creator = req.user.id;
+		comment.task_id = req.task.id;
 		comment.type = History.TYPE.COMMENT;
 		comment.status = History.STATUS.NORMAL;
 		comment.message = post.message;
@@ -261,15 +235,9 @@ router.post(/^\/(\d+)\/comment\/?$/, function(req, res) {
 	});
 });
 
-router.get(/^\/(\d+)\/parent\/?$/, function(req, res) {
-	var id = req.match[1];
-
+router.get('/:task_id/parent', function(req, res) {
 	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Task.load(id, then);
-	}).then(function(then, task) {
-		Task.findByTask(task, { type: 'parent' }, then);
+		Task.findByTask(req.task, { type: 'parent' }, then);
 	}).then(function(then, tasks) {
 		var result = [];
 		tasks.forEach(function(task, i) {
@@ -287,15 +255,10 @@ router.get(/^\/(\d+)\/parent\/?$/, function(req, res) {
 	});
 });
 
-router.get(/^\/(\d+)\/sub\/?$/, function(req, res) {
-	var id = req.match[1];
-
+router.get('/:task_id/sub', function(req, res) {
 	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Task.load(id, then);
-	}).then(function(then, task) {
-		Task.findByTask(task, { type: 'sub' }, then);
+		console.log(req.task);
+		Task.findByTask(req.task, { type: 'sub' }, then);
 	}).then(function(then, tasks) {
 		var result = [];
 		tasks.forEach(function(task, i) {

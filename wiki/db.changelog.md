@@ -1,5 +1,15 @@
 # db changelog
 
+## 2015-03-08: Change table name
+```
+RENAME TABLE `person` TO `user`;
+RENAME TABLE `person2task` TO `user2task`;
+RENAME TABLE `person2organization` TO `user2organization`;
+ALTER TABLE `user2organization` ADD `position` VARCHAR(200)  NULL  DEFAULT NULL  AFTER `organization_id`;
+ALTER TABLE `user2organization` CHANGE `person_id` `user_id` INT(11)  NULL  DEFAULT NULL;
+
+```
+
 ## 2015-03-08: Change assign
 ```
 ALTER TABLE `task` CHANGE `assign` `assign` INT(11)  NULL  DEFAULT '0';

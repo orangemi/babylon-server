@@ -1,18 +1,18 @@
 var mysql = require('mysql');
 var Then = require('thenjs');
-var Person = require('../lib/Person');
+var User = require('../lib/User');
 var Task = require('../lib/Task');
 
-var person;
+var user;
 var task;
 // Then(function(then) {
 // 	Task.load(2, then);
 // }).then(function(then, result) {
 // 	task = result;
-// 	Person.load(3, then);
+// 	User.load(3, then);
 // }).then(function(then, result) {
-// 	person = result;
-// 	task.assignToPerson(person);
+// 	user = result;
+// 	task.assignToUser(user);
 // });
 
 Then(function(then) {
@@ -22,6 +22,6 @@ Then(function(then) {
 	Task.load(3, then);
 }).then(function(then, result) {
 	task.assignToTask(result);
-	// person = result;
-	// task.assignToPerson(person);
+	// user = result;
+	// task.assignToUser(user);
 });

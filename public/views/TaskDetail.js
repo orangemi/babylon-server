@@ -1,6 +1,6 @@
 define([
-'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/PersonCollection', 'models/Utils'],
-function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, TaskCollection, PersonCollection, Utils) {
+'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/UserCollection', 'models/Utils'],
+function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, TaskCollection, UserCollection, Utils) {
 	var View = Marionette.Layout.extend({
 		className : 'task-detail',
 		template : _.template(Html),
@@ -31,8 +31,27 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		onChange : function() {
-			this.$el.find('.title-panel .title').val(this.model.get('title'));
-			this.$el.find('.description-panel .description').html(this.model.get('description'));
+			var title, description;
+
+			switch (this.model.type) {
+				case 'task': 
+					title = this.model.get('title');
+					description = this.model.get('description');
+					break;
+				case 'user':
+					title = this.model.get('name') + '\'s Task';
+					description = '';
+					break;
+				case 'organization':
+					title = this.model.get('name') + '\'s Task';
+					description = '';
+					break;
+			}
+
+			this.$el.find('.title-panel .title').val(title)
+				.prop('disabled', this.model.type != 'task');
+			this.$el.find('.description-panel .description').html(description)
+				.prop('disabled', this.model.type != 'task');
 		},
 
 		onAssigneeClick : function() {
@@ -44,14 +63,14 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			var $search = this.$el.find('.assignee-search');
 			var $input = this.$el.find('.assignee-input');
 			var value = $input.val();
-			var $list = this.$el.find('.person-popup-list');
-			new PersonCollection().search(value, {}, function(list) {
+			var $list = this.$el.find('.user-popup-list');
+			new UserCollection().search(value, {}, function(list) {
 				$list.empty().show();
-				list.person.forEach(function(person) {
-					var $li = $("<li>").html(person.email).appendTo($list);
+				list.user.forEach(function(user) {
+					var $li = $("<li>").html(user.email).appendTo($list);
 					$li.click(function() {
-						self.model.assignTo('person', person.id, { sort: 1 });
-						//self.addParentTask(new Task(person));
+						self.model.assignTo('user', user.id, { sort: 1 });
+						//self.addParentTask(new Task(user));
 						$list.hide();
 						$input.val('');
 						$search.addClass('hide');
@@ -164,10 +183,20 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		getSubTasks : function() {
-			var id = this.model.get('id');
 			this.taskListView = this.taskListView || new TaskListView();
 			this.taskListView.render().$el.appendTo(this.$el.find('>.sub-tasks-panel'));
-			this.taskListView.collection.fetch('sub', id);
+
+			var id = this.model.get('id');
+			switch (this.model.type) {
+				case 'task': return this.taskListView.collection.fetch('sub', id);
+				case 'user': return this.taskListView.collection.fetch('user', id);
+				default:
+					console.error('Unknown model type');
+			}
+			// if (this.model instanceof Task)
+				
+			// else if (this.model.type instanceof User)
+			// 	this.taskListView.collection.fetch('user', id);
 		},
 	});
 

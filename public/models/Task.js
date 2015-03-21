@@ -3,7 +3,8 @@ define(
 function (Backbone, _, $, app, Utils) {
 
 	var Model = Backbone.Model.extend({
-
+		type : 'task',
+		synced : false,
 		save : function(options, next) {
 			var self = this;
 			options = options || {};

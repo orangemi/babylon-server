@@ -1,15 +1,15 @@
 define(
-['backbone', 'underscore', 'jquery', 'app/app', 'models/Utils', 'models/Person'],
-function (Backbone, _, $, app, Utils, Person) {
+['backbone', 'underscore', 'jquery', 'app/app', 'models/Utils', 'models/User'],
+function (Backbone, _, $, app, Utils, User) {
 
 	var Collection = Backbone.Collection.extend({
-		model : Person,
+		model : User,
 
 		search : function(word, options, callback) {
 			callback = typeof(callback) == 'function' ? callback : Utils.emptyFn;
 			var uri = ['search'].join('/');
 			var post = {
-				types: ['person'],
+				types: ['user'],
 				organization_id: null,
 				word: word,
 			};

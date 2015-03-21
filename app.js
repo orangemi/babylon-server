@@ -5,8 +5,7 @@ var fs = require('fs');
 var Then = require('thenjs');
 
 var Router = require('./lib/Router');
-var Person = require('./lib/Person');
-var Task = require('./lib/Task');
+var User = require('./lib/User');
 var Session = require('./lib/Session');
 
 var httpServer = new Http.Server();
@@ -50,20 +49,20 @@ router.get('/login', function(req, res) {
 
 	Then(function(then) {
 		if (!email) throw new Error('no email');
-		Person.find({
+		User.find({
 			email: email,
 		}, {}, then);
-	}).then(function(then, persons) {
-		var person = persons[0];
-		// console.log(persons);
-		if (!person) throw new Error('no user');
-		if (person.status != Person.STATUS.NORMAL) throw new Error('user status freeze');
-		if (person.password != password) throw new Error('password wrong');
-		return then(null, person);
-	}).then(function(then, person) {
-		var session = Session.set(person.id);
+	}).then(function(then, users) {
+		var user = users[0];
+		// console.log(users);
+		if (!user) throw new Error('no user');
+		if (user.status != User.STATUS.NORMAL) throw new Error('user status freeze');
+		if (user.password != password) throw new Error('password wrong');
+		return then(null, user);
+	}).then(function(then, user) {
+		var session = Session.set(user.id);
 		res.setCookie('session', session);
-		res.json(person.display());
+		res.json(user.display());
 		then();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString(), stack: error.stack });
@@ -73,66 +72,11 @@ router.get('/login', function(req, res) {
 	});
 });
 
-router.post('/search', function(req, res) {
-	var post;
-	var current_person;
-	var current_task;
-
-	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		current_person = person;
-		req.getBody(then);
-	}).then(function(then, body) {
-		post = body ? JSON.parse(body) : {};
-		then();
-	}).parallel([
-		function(then) {
-			if (post.types.indexOf('task') == -1) return then(null, []);
-			Task.find({
-				status : Task.STATUS.NORMAL,
-				//organization_id : post.organization_id,
-				'title LIKE' : ['%', post.word, '%'].join(''),
-				//TODO may be need to add description search...
-			}, then);
-		},
-		function(then) {
-			if (post.types.indexOf('person') == -1) return then(null, []);
-			Person.find({
-				status : Person.STATUS.NORMAL,
-				//organization_id : post.organization_id,
-				'email LIKE' : ['%', post.word, '%'].join(''),
-				//TODO may be need to add nickname search...
-			}, then);
-		}, 
-		// function(then) {}, //TODO add find tag
-		// function(then) {}, //TODO add find comment (very late)
-	]).then(function(then, list) {
-		var result = {};
-		var types = ['task', 'person'];
-		list.forEach(function(list, i) {
-			var type = types[i];
-			if (!type) return;
-			result[type] = [];
-			list.forEach(function(line) {
-				result[type].push(line.display());
-			});
-		});
-		res.json(result);
-		then();
-	}).catch(function(then, error) {
-		res.json({ error: error.toString(), stack: error.stack });
-		then();
-	}).finally(function() {
-		res.end();
-	});
-
+router.use(/^\/(\d+)/, function(req, res) {
+	req.params.organization_id = req.matchedResult[1];
 });
 
+router.use(/^\/(\d+)/, require('./route/organization'));
 router.use('/my', require('./route/my'));
-router.use('/task', require('./route/task'));
-router.use('/person', require('./route/person'));
 
 httpServer.listen(3000);

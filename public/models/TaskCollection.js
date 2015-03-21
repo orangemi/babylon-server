@@ -20,6 +20,10 @@ function (Backbone, _, $, app, Utils, Task) {
 			});
 		},
 
+		// fetchByModel : function(model) {
+			// if (model)
+		// },
+
 		fetch : function(type, id, callback) {
 			if (typeof(id) == 'function') {
 				id = null;
@@ -30,16 +34,16 @@ function (Backbone, _, $, app, Utils, Task) {
 			this.remove(this.models);
 
 			switch (type) {
-				case 'my': return this.fetchMy(callback);	
+				case 'my': return this.fetchUser(app.me.id, callback);	
 				case 'sub': return this.fetchSub(id, callback);	
 				case 'parent': return this.fetchParent(id, callback);	
-				case 'person': return this.fetchPerson(id, callback);
+				case 'user': return this.fetchUser(id, callback);
 			}
 		},
 
 		fetchParent : function(id, callback) {
 			var self = this;
-			var uri = ['task', id, 'parent'].join('/');
+			var uri = [app.organization.id, 'task', id, 'parent'].join('/');
 			Utils.get(uri, {}, function(rep) {
 				// self.assignType = 'task';
 				// self.assignTo = id;
@@ -52,7 +56,7 @@ function (Backbone, _, $, app, Utils, Task) {
 
 		fetchSub : function(id, callback) {
 			var self = this;
-			var uri = ['task', id, 'sub'].join('/');
+			var uri = [app.organization.id, 'task', id, 'sub'].join('/');
 			Utils.get(uri, {}, function(rep) {
 				self.assignType = 'task';
 				self.assignTo = id;
@@ -63,11 +67,25 @@ function (Backbone, _, $, app, Utils, Task) {
 			});
 		},
 
-		fetchMy : function(callback) {
+		// fetchMy : function(me, callback) {
+		// 	var self = this;
+		// 	var uri = [app.organization.id, 'mytask'].join('/');
+		// 	Utils.get(uri, {}, function(rep) {
+		// 		self.assignType = 'my';
+		// 		self.assignTo = 0;
+		// 		rep.forEach(function(task) {
+		// 			self.add(task);
+		// 		});
+		// 		// self.add(rep);
+		// 	});
+		// },
+
+
+		fetchUser : function(id, callback) {
 			var self = this;
-			var uri = ['my', 'task'].join('/');
+			var uri = [app.organization.id, 'user', id, 'task'].join('/');
 			Utils.get(uri, {}, function(rep) {
-				self.assignType = 'my';
+				self.assignType = 'user';
 				self.assignTo = 0;
 				rep.forEach(function(task) {
 					self.add(task);

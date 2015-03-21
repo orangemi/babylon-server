@@ -1,7 +1,8 @@
 var Then = require('thenjs');
 var Router = require('../lib/Router');
-var Person = require('../lib/Person');
+var User = require('../lib/User');
 var Task = require('../lib/Task');
+var Organization = require('../lib/Organization');
 var extend = require('../lib/extend');
 var Session = require('../lib/Session');
 
@@ -10,10 +11,10 @@ var router = module.exports = new Router();
 router.use('/:anything*', function(req, res, next) {
 	Then(function(then) {
 		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		req.person = person;
+	}).then(function(then, userId) {
+		User.load(userId, then);
+	}).then(function(then, user) {
+		req.user = user;
 		then();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString() });
@@ -24,48 +25,38 @@ router.use('/:anything*', function(req, res, next) {
 }, { wait: true });
 
 router.get('/', function(req, res) {
-	res.json(req.person.display());
-	res.end();
-});
-
-// router.get('/', function(req, res) {
-// 	Then(function(then) {
-// 		Session.get(req.cookie.session, then);
-// 	}).then(function(then, personId) {
-// 		Person.load(personId, then);
-// 	}).then(function(then, person) {
-// 		if (person.status != Person.STATUS.NORMAL) throw new Error('Invalid User');
-// 		res.json(person.display());
-// 		//res.write('this is my homepage #' + personId);
-// 		then();
-// 	}).catch(function(then, error) {
-// 		res.json({ error: error.toString() });
-// 		then();
-// 	}).finally(function() {
-// 		res.end();
-// 	});
-// });
-
-router.get('/task', function(req, res) {
 	Then(function(then) {
-		Session.get(req.cookie.session, then);
-	}).then(function(then, personId) {
-		Person.load(personId, then);
-	}).then(function(then, person) {
-		Task.findByPerson(person, then);
-	}).then(function(then, tasks) {
-		var result = [];
-		tasks.forEach(function(task, i) {
-			var t = task.display();
-			t.sort = i + 1;
-			result.push(t);
+		Organization.findByUser(req.user, then);
+	}).then(function(then, organizations) {
+		var result = req.user.display();
+		result.organizations = [];
+		organizations.forEach(function(organization) {
+			result.organizations.push(organization.display());
 		});
 		res.json(result);
-		then();
+		res.end();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString() });
-		then();
-	}).finally(function() {
 		res.end();
+	}).finally(function() {
+		next();
+	});
+});
+
+router.get('/organization', function(req, res) {
+	Then(function(then) {
+		Organization.findByUser(req.user, then);
+	}).then(function(then, organizations) {
+		var result = [];
+		organizations.forEach(function(organization) {
+			result.push(organization.display());
+		});
+		res.json(result);
+		res.end();
+	}).catch(function(then, error) {
+		res.json({ error: error.toString() });
+		res.end();
+	}).finally(function() {
+		next();
 	});
 });

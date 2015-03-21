@@ -3,6 +3,8 @@ define(
 function (Backbone, _, $, app, Utils) {
 
 	var Model = Backbone.Model.extend({
+		type : 'user',
+		synced : false,
 
 		fetchMe : function(options, next) {
 			if (typeof(options) == 'function') {
@@ -26,6 +28,13 @@ function (Backbone, _, $, app, Utils) {
 		
 		sync : function() {
 
+		},
+
+		getOrganization: function(idx) {
+			if (!idx) idx = 0;
+			var organizations = this.get('organizations');
+			if (!organizations) return null;
+			return organizations[idx];
 		},
 
 		getJSON : function() {

@@ -54,8 +54,12 @@ function (Backbone, _, DialogView, HomeView, Models) {
 
 		goTask : function(id, model) {
 			var self = this;
-			require(['views/TaskDetail'], function(TaskDetailView) {
-				var view = new TaskDetailView({model: model});
+			var view;
+			require(['views/TaskDetail','views/UserTaskDetail'], function(TaskDetailView, UserTaskDetailView) {
+				if (model.type == 'task')
+					view = new TaskDetailView({model: model});
+				else if (model.type == 'user')
+					view = new UserTaskDetailView({model: model});
 				self.app.view.detailRegion.show(view);
 			});
 		},

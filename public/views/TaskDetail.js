@@ -1,8 +1,7 @@
-define([
-'marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/UserCollection', 'models/Utils'],
+define(['marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/UserCollection', 'models/Utils'],
 function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, TaskCollection, UserCollection, Utils) {
 	var View = Marionette.Layout.extend({
-		className : 'task-detail',
+		className : 'task-detail normal-task',
 		template : _.template(Html),
 
 		events: {
@@ -24,6 +23,9 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			this.listenTo(this.commentCollection, 'add', this.onAddComment);
 			this.projectCollection = new TaskCollection();
 			this.listenTo(this.projectCollection, 'add', this.onAddProject);
+
+			this.taskListView = new TaskListView();
+
 		},
 
 		onRemove :function() {
@@ -31,27 +33,8 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		onChange : function() {
-			var title, description;
-
-			switch (this.model.type) {
-				case 'task': 
-					title = this.model.get('title');
-					description = this.model.get('description');
-					break;
-				case 'user':
-					title = this.model.get('name') + '\'s Task';
-					description = '';
-					break;
-				case 'organization':
-					title = this.model.get('name') + '\'s Task';
-					description = '';
-					break;
-			}
-
-			this.$el.find('.title-panel .title').val(title)
-				.prop('disabled', this.model.type != 'task');
-			this.$el.find('.description-panel .description').html(description)
-				.prop('disabled', this.model.type != 'task');
+			this.$el.find('.title-panel .title').val(this.model.get('title'));
+			this.$el.find('.description-panel .description').html(this.model.get('description'));
 		},
 
 		onAssigneeClick : function() {
@@ -142,11 +125,14 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		onRender : function() {
+			this.taskListView.render().$el.appendTo(this.$el.children('.sub-tasks-panel'));
+
 			this.onChange();
 			this.getSubTasks();
 			this.getTags();
 			this.getComments();
 			this.getProjects();
+			this.getAssignee();
 		},
 
 		addParentTask : function(task) {
@@ -154,6 +140,10 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			this.model.assignTo('task', task.get('id'), function(rep) {
 				self.projectCollection.add(task);
 			});
+		},
+
+		getAssignee : function() {
+
 		},
 
 		getTags : function() {
@@ -183,20 +173,8 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		getSubTasks : function() {
-			this.taskListView = this.taskListView || new TaskListView();
-			this.taskListView.render().$el.appendTo(this.$el.find('>.sub-tasks-panel'));
-
 			var id = this.model.get('id');
-			switch (this.model.type) {
-				case 'task': return this.taskListView.collection.fetch('sub', id);
-				case 'user': return this.taskListView.collection.fetch('user', id);
-				default:
-					console.error('Unknown model type');
-			}
-			// if (this.model instanceof Task)
-				
-			// else if (this.model.type instanceof User)
-			// 	this.taskListView.collection.fetch('user', id);
+			this.taskListView.collection.fetch('sub', id);
 		},
 	});
 

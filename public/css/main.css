@@ -57,9 +57,11 @@
 .project-list .panel { border-bottom: none; }
 .project-line .remove { display: none; height: 20px; padding: 0 12px; }
 .project-line:hover .remove { display: block; }
-.project-popup-list { position: absolute; right: 36px; left: 36px; top: 26px; border-radius: 0; border: 0; display: none; background-color: #fff; }
-.project-popup-list li { border-bottom: solid 1px #ddd; padding: 5px 3px; }
-.project-popup-list li:hover { background-color: #eee; }
+
+.auto-complete { position: relative; }
+.auto-complete .list { position: absolute; right: 0px; left: 0px; top: 26px; border-radius: 0; border: 0; display: none; background-color: #fff; }
+.auto-complete .list li { border-bottom: solid 1px #ddd; padding: 5px 3px; }
+.auto-complete .list li:hover { background-color: #eee; }
 
 
 /*.task-detail .comment-panel { display: block; }*/

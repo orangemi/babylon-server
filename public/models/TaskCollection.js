@@ -7,19 +7,6 @@ function (Backbone, _, $, app, Utils, Task) {
 		assignType : null,
 		assignTo : null,
 
-		search : function(word, options, callback) {
-			callback = typeof(callback) == 'function' ? callback : Utils.emptyFn;
-			var uri = ['search'].join('/');
-			var post = {
-				types: ['task'],
-				organization_id: null,
-				word: word,
-			};
-			Utils.post(uri, post, function(rep) {
-				callback(rep);
-			});
-		},
-
 		// fetchByModel : function(model) {
 			// if (model)
 		// },
@@ -94,6 +81,19 @@ function (Backbone, _, $, app, Utils, Task) {
 			});
 		},
 	});
+
+	Collection.search = function(word, options, callback) {
+		callback = typeof(callback) == 'function' ? callback : Utils.emptyFn;
+		var uri = [app.organization.id, 'search'].join('/');
+		var post = {
+			types: ['task'],
+			organization_id: null,
+			word: word,
+		};
+		Utils.post(uri, post, function(rep) {
+			callback(rep.task);
+		});
+	};
 
 	return Collection;
 });

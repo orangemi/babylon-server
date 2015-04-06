@@ -1,5 +1,5 @@
-define(['marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/UserCollection', 'models/Utils'],
-function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, TaskCollection, UserCollection, Utils) {
+define(['marionette', 'underscore', 'app/app', 'text!html/TaskDetail.html', 'views/Menu', 'views/TaskList', 'views/CommentLine',  'views/TagLine', 'views/ProjectLine', 'models/Task', 'models/CommentCollection', 'models/TaskCollection', 'models/UserCollection', 'views/AutoComplete', 'models/Utils'],
+function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, TagLineView, ProjectLineView, Task, CommentCollection, TaskCollection, UserCollection, AutoCompleteView, Utils) {
 	var View = Marionette.Layout.extend({
 		className : 'task-detail normal-task',
 		template : _.template(Html),
@@ -7,10 +7,8 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		events: {
 			'blur .title' : 'onTitleBlur',
 			'blur .description' : 'onDescriptionBlur',
-			'keyup .project-input' : 'onProjectInputKeyUp',
 			'click .comment-btn' : 'onCommentClick',
 			'click .assignee' : 'onAssigneeClick',
-			'keyup .assignee-input' : 'onAssigneeInputKeyUp',
 		},
 
 		initialize: function(options) {
@@ -26,6 +24,26 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 
 			this.taskListView = new TaskListView();
 
+			//project search
+			this.projectAutoCompleteView = new AutoCompleteView();
+			this.projectAutoCompleteView.loadCollection = function(pattern, callback) {
+				TaskCollection.search(pattern, {}, callback);
+			};
+			this.projectAutoCompleteView.makeHtml = function(model) {
+				return model.get('title');
+			};
+			this.listenTo(this.projectAutoCompleteView, 'select', this.onSelectProject);
+
+			//assignee search
+			this.assigneeAutoCompleteView = new AutoCompleteView();
+			this.assigneeAutoCompleteView.loadCollection = function(pattern, callback) {
+				UserCollection.search(pattern, {}, callback);
+			};
+			this.assigneeAutoCompleteView.makeHtml = function(model) {
+				return model.get('nick');
+			};
+			this.listenTo(this.assigneeAutoCompleteView, 'select', this.onAssigneeInputKeyUp);
+
 		},
 
 		onRemove :function() {
@@ -39,46 +57,6 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 
 		onAssigneeClick : function() {
 			this.$el.find('.assignee-search').removeClass('hide');
-		},
-
-		onAssigneeInputKeyUp : function() {
-			var self = this;
-			var $search = this.$el.find('.assignee-search');
-			var $input = this.$el.find('.assignee-input');
-			var value = $input.val();
-			var $list = this.$el.find('.user-popup-list');
-			new UserCollection().search(value, {}, function(list) {
-				$list.empty().show();
-				list.user.forEach(function(user) {
-					var $li = $("<li>").html(user.email).appendTo($list);
-					$li.click(function() {
-						self.model.assignTo('user', user.id, { sort: 1 });
-						//self.addParentTask(new Task(user));
-						$list.hide();
-						$input.val('');
-						$search.addClass('hide');
-					});
-				});
-
-			});
-		},
-
-		onProjectInputKeyUp : function() {
-			var self = this;
-			var $input = this.$el.find('.project-input');
-			var value = $input.val();
-			var $list = this.$el.find('.project-popup-list');
-			new TaskCollection().search(value, {}, function(list) {
-				$list.empty().show();
-				list.task.forEach(function(task) {
-					var $li = $("<li>").html(task.title).appendTo($list);
-					$li.click(function() {
-						self.addParentTask(new Task(task));
-						$list.hide();
-						$input.val('');
-					});
-				});
-			});
 		},
 
 		onCommentClick : function() {
@@ -125,7 +103,8 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		},
 
 		onRender : function() {
-			this.taskListView.render().$el.appendTo(this.$el.children('.sub-tasks-panel'));
+			this.taskListView.render().$el.appendTo(this.$el.find('.sub-tasks-panel'));
+			this.projectAutoCompleteView.render().$el.appendTo(this.$el.find('.project-input'));
 
 			this.onChange();
 			this.getSubTasks();
@@ -135,7 +114,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 			this.getAssignee();
 		},
 
-		addParentTask : function(task) {
+		onSelectProject : function(task) {
 			var self = this;
 			this.model.assignTo('task', task.get('id'), function(rep) {
 				self.projectCollection.add(task);
@@ -158,14 +137,6 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 
 		getProjects : function() {
 			this.projectCollection.fetch('parent' ,this.model.get('id'));
-			// var $el = this.$el;
-
-			// //TEST: add sample tags
-			// for (var i = 0; i < 2; i++) {
-			// 	var projectLine = new ProjectLineView();
-			// 	projectLine.render().$el.appendTo($el.find('.project-list'));
-			// }
-
 		},
 
 		getComments : function() {

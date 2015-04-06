@@ -10,9 +10,10 @@ function (Backbone, _, $, app, Utils) {
 			options = options || {};
 			var id = this.get('id') || '';
 			var post = this.getJSON();
+			var uri = [app.organization.id, 'task', id].join('/');
 
 			if (!id || this.hasChanged()) {
-				Utils.post('task/' + id, post, function(rep) {
+				Utils.post(uri, post, function(rep) {
 					self.changed = {};
 					if (rep.id) self.set('id', rep.id);
 					if (typeof(next) == 'function') next(rep);
@@ -39,7 +40,7 @@ function (Backbone, _, $, app, Utils) {
 			options = options || {};
 			var self = this;
 			if (!this.get('id')) throw 'Task can not be assign without id.';
-			var uri = ['task', this.id, 'assign'].join('/');
+			var uri = [app.organization.id, 'task', this.id, 'assign'].join('/');
 			var post = {
 				target: target,
 				type: type,

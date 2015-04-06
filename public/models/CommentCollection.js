@@ -17,7 +17,7 @@ function (Backbone, _, $, app, Utils) {
 			this.remove(this.models);
 
 			var self = this;
-			var uri = ['task', id, 'comment'].join('/');
+			var uri = [app.organization.id, 'task', id, 'comment'].join('/');
 			Utils.get(uri, {}, function(rep) {
 				self.add(rep);
 			});

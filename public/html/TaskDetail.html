@@ -1,41 +1,46 @@
-<div class="assignee-panel panel">
-	<div class="assignee">Me</div>
-	<div class="assignee-search hide">
-		<div><input class="assignee-input" placeHolder="email..." /></div>
-		<ul class="person-popup-list"></ul>
-	</div>
-	<div class="panel-value schedule_time"></div>
+<div class="action-panel task-detail-panel">
+	<button class="btn btn-normal">Me</button>
+	<button class="btn btn-normal">Add SubTask</button>
+	<button class="btn btn-normal">Schedule</button>
+	<button class="btn btn-normal">More</button>
+</div>
+<div class="assignee-panel task-detail-panel hide">
+	<div class="assignee-input"></div>
+</div>
+<div class="panel-value schedule_time hide">
+	<span class="date-select"></span>
+	<span class="time-select"></span>
 </div>
 <div class="project-panel">
-	<div class="project-search panel">
-		<span class="icon icon-plus"></span>
+	<div class="project-search task-detail-panel">
+		<span class="panel-icon icon icon-plus"></span>
 		<div class="project-input panel-value"></div>
 		<!-- <input class="project-input panel-value" placeHolder="project..." /> -->
-		<span class="icon icon-search"></span>
+		<!-- <span class="icon icon-search"></span> -->
 		<ul class="project-popup-list"></ul>
 		<!-- <button class="btn btn-normal"><span class="icon icon-search"></span></button> -->
 	</div>
 	<ul class="project-list"></ul>
 </div>
 
-<div class="panel title-panel">
+<div class="task-detail-panel title-panel">
 	<span class="panel-icon icon icon-task"></span>
 	<input class="panel-value title" value="Title" />
 	<!-- <textarea class="panel-value title">Title</textarea> -->
 </div>
-<div class="panel tag-panel">
+<div class="task-detail-panel tag-panel">
 	<span class="panel-icon icon icon-tags"></span>
 	<ul class="panel-value tag-list">
 		<li class="tag-input flex1"><input class="new-tag" /></li>
 	</ul>
 </div>
-<div class="panel description-panel">
+<div class="task-detail-panel description-panel">
 	<span class="panel-icon icon"></span>
 	<textarea class="panel-value description" placeHolder="no description..."></textarea>
 </div>
 <div class="sub-tasks-panel"></div>
 <div class="comment-panel">
-	<div class="panel">
+	<div class="task-detail-panel">
 		<span class="panel-icon icon"></span>
 		<div class="flex1">
 			<textarea class="comment-input" placeholder="Comment"></textarea>

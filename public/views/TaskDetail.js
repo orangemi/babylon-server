@@ -105,6 +105,7 @@ function (Marionette, _, app, Html, MenuView, TaskListView, CommentLineView, Tag
 		onRender : function() {
 			this.taskListView.render().$el.appendTo(this.$el.find('.sub-tasks-panel'));
 			this.projectAutoCompleteView.render().$el.appendTo(this.$el.find('.project-input'));
+			this.assigneeAutoCompleteView.render().$el.appendTo(this.$el.find('.assignee-input'));
 
 			this.onChange();
 			this.getSubTasks();

@@ -35,9 +35,9 @@
 .task-line:hover .go-detail { display: block; }
 
 .task-detail { }
-.task-detail .panel { padding: 8px 6px; border-bottom: solid 1px #ccc; font-size: 14px; display: flex; }
-.task-detail .panel-value { flex: 1; }
-.task-detail .panel>.icon { width: 30px; font-size: 14px; text-align: center; }
+.task-detail-panel { padding: 8px 6px; border-bottom: solid 1px #ccc; font-size: 14px; display: flex; }
+.task-detail-panel-value { flex: 1; }
+.task-detail-panel>.icon { width: 30px; font-size: 14px; text-align: center; }
 .task-detail .title-panel { min-height: 20px;  }
 .task-detail .title-panel .title { vertical-align: top; min-height: 18px; border: solid 1px transparent; resize: none; font-size: 18px; }
 .task-detail .title-panel .title:hover, .title-panel .title:focus { border: solid 1px #ccc; }

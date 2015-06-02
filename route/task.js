@@ -36,12 +36,13 @@ router.get('/', function(req, res) {
 
 router.use(/^\/(\d+)/, function(req, res, next) {
 	req.params.task_id = req.matchedResult[1];
+	// console.log(req.matchedResult[1]);
 	Then(function(then) {
 		Task.load(req.params.task_id, then);
 	}).then(function(then, task) {
 		if (task.organization_id != req.organization.id) throw 'organization error';
 		req.task = task;
-		then();		
+		then();
 	}).catch(function(then, error) {
 		res.json({ error: error.toString(), stack: error.stack });
 		res.end();
@@ -49,6 +50,14 @@ router.use(/^\/(\d+)/, function(req, res, next) {
 		next();
 	});
 }, { wait: true });
+
+router.get('/:task_id', function(req, res) {
+	Then(function(then) {
+		var task = req.task;
+		res.json(task.display());
+		res.end();
+	});
+});
 
 router.post(/^\/((\w+)\/?)?$/, function(req, res) {
 	var id = req.match[2];
@@ -257,7 +266,7 @@ router.get('/:task_id/parent', function(req, res) {
 
 router.get('/:task_id/sub', function(req, res) {
 	Then(function(then) {
-		console.log(req.task);
+		// console.log(req.task);
 		Task.findByTask(req.task, { type: 'sub' }, then);
 	}).then(function(then, tasks) {
 		var result = [];
